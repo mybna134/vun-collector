@@ -1,0 +1,175 @@
+name: Build and publish signed APK
+
+# 只响应版本 tag，普通分支 push 不触发。
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apk-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle cache
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          # 签名构建不缓存配置状态；缓存范围不包含 RUNNER_TEMP。
+          cache-read-only: false
+
+      - name: Parse tag version
+        id: version
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          python3 - <<'PY'
+          import os, re
+          tag = os.environ['RELEASE_TAG']
+          number = r'(?:0|[1-9][0-9]*)'
+          ident = r'[0-9A-Za-z-]+'
+          match = re.fullmatch(
+              rf'v({number})\.({number})\.({number})(?:-({ident}(?:\.{ident})*))?(?:\+({ident}(?:\.{ident})*))?', tag)
+          if not match:
+              raise SystemExit('::error::Tag must be vMAJOR.MINOR.PATCH[-prerelease][+metadata]')
+          major, minor, patch = map(int, match.group(1, 2, 3))
+          prerelease = match.group(4)
+          if prerelease and any(x.isdigit() and len(x) > 1 and x.startswith('0') for x in prerelease.split('.')):
+              raise SystemExit('::error::Numeric prerelease identifiers must not have leading zeroes')
+          code = major * 10000 + minor * 100 + patch
+          if minor > 99 or patch > 99 or not 1 <= code <= 2100000000:
+              raise SystemExit('::error::minor/patch must be 0..99; versionCode must be 1..2100000000')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write(f'name={tag[1:]}\ncode={code}\nprerelease={str(prerelease is not None).lower()}\n')
+          print(f'Building versionName={tag[1:]}, versionCode={code}')
+          PY
+
+      - name: Install Android build dependencies
+        run: |
+          # 使用项目声明的版本，不升级 Gradle / AGP。
+          sdkmanager 'platforms;android-36' 'build-tools;36.0.0' \
+            'ndk;29.0.14206865' 'cmake;3.22.1'
+          chmod +x ./gradlew
+
+      - name: Restore signing keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          # 不回显 Secrets，不在仓库目录创建密钥或 properties。
+          umask 077
+          python3 - <<'PY'
+          import base64, binascii, os
+          from pathlib import Path
+          required = ('KEYSTORE_BASE64', 'KEYSTORE_PASSWORD', 'KEY_ALIAS', 'KEY_PASSWORD')
+          if any(not os.environ.get(key) for key in required):
+              raise SystemExit('::error::Configure all four signing Secrets before releasing')
+          try:
+              data = base64.b64decode(''.join(os.environ['KEYSTORE_BASE64'].split()), validate=True)
+          except (ValueError, binascii.Error):
+              raise SystemExit('::error::KEYSTORE_BASE64 is not valid Base64') from None
+          if not data:
+              raise SystemExit('::error::Decoded keystore is empty')
+          path = Path(os.environ['RUNNER_TEMP']) / 'release-keystore.jks'
+          path.write_bytes(data)
+          path.chmod(0o600)
+          PY
+
+      - name: Build signed release APK
+        env:
+          RELEASE_STORE_FILE: ${{ runner.temp }}/release-keystore.jks
+          RELEASE_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          VERSION_NAME: ${{ steps.version.outputs.name }}
+          VERSION_CODE: ${{ steps.version.outputs.code }}
+        run: |
+          ./gradlew :app:assembleRelease \
+            "-PversionName=$VERSION_NAME" "-PversionCode=$VERSION_CODE" \
+            --no-configuration-cache --stacktrace --console=plain
+
+      - name: Verify signature and version, rename APK
+        id: apk
+        env:
+          VERSION_NAME: ${{ steps.version.outputs.name }}
+          VERSION_CODE: ${{ steps.version.outputs.code }}
+        run: |
+          # 无 flavor / ABI 拆分，预期只有一个 APK。拒绝缺失或多产物。
+          shopt -s nullglob
+          apks=(app/build/outputs/apk/release/*.apk)
+          if [[ ${#apks[@]} -ne 1 ]]; then
+            echo '::error::Expected exactly one release APK'
+            exit 1
+          fi
+          tools="$ANDROID_HOME/build-tools/36.0.0"
+          "$tools/apksigner" verify "${apks[0]}"
+          "$tools/aapt" dump badging "${apks[0]}" > "$RUNNER_TEMP/apk-badging.txt"
+          python3 - <<'PY'
+          import os, re
+          from pathlib import Path
+          line = next((x for x in (Path(os.environ['RUNNER_TEMP']) / 'apk-badging.txt').read_text().splitlines()
+                       if x.startswith('package: ')), '')
+          fields = dict(re.findall(r"(\w+)='([^']*)'", line))
+          expected = {'name': 'com.sportsmonitor.logger', 'versionName': os.environ['VERSION_NAME'],
+                      'versionCode': os.environ['VERSION_CODE']}
+          if any(fields.get(k) != v for k, v in expected.items()):
+              raise SystemExit('::error::APK applicationId or version does not match the requested release')
+          PY
+          mkdir -p "$RUNNER_TEMP/release"
+          target="$RUNNER_TEMP/release/Vun-Collector-v${VERSION_NAME}.apk"
+          cp -- "${apks[0]}" "$target"
+          printf 'path=%s\n' "$target" >> "$GITHUB_OUTPUT"
+
+      - name: Remove temporary signing keystore
+        if: ${{ always() }}
+        run: rm -f -- "$RUNNER_TEMP/release-keystore.jks"
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          PRERELEASE: ${{ steps.version.outputs.prerelease }}
+          APK_PATH: ${{ steps.apk.outputs.path }}
+        run: |
+          # 先上传到草稿，附件成功后再发布；重跑不会覆盖已发布附件。
+          args=()
+          if [[ "$PRERELEASE" == true ]]; then
+            args+=(--prerelease)
+          else
+            args+=(--prerelease=false)
+          fi
+          if gh release view "$RELEASE_TAG" --json isDraft > "$RUNNER_TEMP/release-state.json"; then
+            if ! python3 -c 'import json,sys; sys.exit(0 if json.load(open(sys.argv[1]))["isDraft"] else 1)' "$RUNNER_TEMP/release-state.json"; then
+              echo '::error::Release is already published; existing assets will not be overwritten'
+              exit 1
+            fi
+            gh release upload "$RELEASE_TAG" "$APK_PATH" --clobber
+          else
+            gh release create "$RELEASE_TAG" "$APK_PATH" --verify-tag --draft \
+              --generate-notes --title "$RELEASE_TAG" "${args[@]}"
+          fi
+          gh release edit "$RELEASE_TAG" --draft=false "${args[@]}"

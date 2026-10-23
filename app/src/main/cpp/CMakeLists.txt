@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.22.1)
+project(gnss_altitude LANGUAGES CXX)
+add_library(gnss_altitude SHARED gnss_altitude.cpp)
+target_compile_features(gnss_altitude PRIVATE cxx_std_17)
+target_compile_options(gnss_altitude PRIVATE -Wall -Wextra -Werror)

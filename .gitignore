@@ -1,0 +1,15 @@
+.gradle/
+.idea/
+build/
+app/build/
+local.properties
+keystore.properties
+release-key.jks
+*.iml
+
+# 所有签名密钥与本机原生构建中间产物
+*.jks
+*.keystore
+.cxx/
+
+keystore.base64.txt
