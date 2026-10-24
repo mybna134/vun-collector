@@ -68,7 +68,31 @@ jobs:
       - name: Install Android build dependencies
         run: |
           # 使用项目声明的版本，不升级 Gradle / AGP。
-          sdkmanager 'platforms;android-36' 'build-tools;36.0.0' \
+          sdk_root="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          if [[ -z "$sdk_root" || ! -d "$sdk_root" ]]; then
+            echo '::error::ANDROID_SDK_ROOT or ANDROID_HOME does not point to an Android SDK'
+            exit 1
+          fi
+          sdkmanager_path=""
+          for candidate in \
+            "$sdk_root/cmdline-tools/latest/bin/sdkmanager" \
+            "$sdk_root/cmdline-tools/bin/sdkmanager" \
+            "$sdk_root/tools/bin/sdkmanager"; do
+            if [[ -x "$candidate" ]]; then
+              sdkmanager_path="$candidate"
+              break
+            fi
+          done
+          if [[ -z "$sdkmanager_path" ]]; then
+            sdkmanager_path="$(find "$sdk_root/cmdline-tools" "$sdk_root/tools" \
+              -type f -name sdkmanager -perm -u+x -print -quit 2>/dev/null || true)"
+          fi
+          if [[ -z "$sdkmanager_path" ]]; then
+            echo "::error::Could not locate sdkmanager under $sdk_root"
+            exit 1
+          fi
+          "$sdkmanager_path" --sdk_root="$sdk_root" \
+            'platforms;android-36' 'build-tools;36.0.0' \
             'ndk;29.0.14206865' 'cmake;3.22.1'
           chmod +x ./gradlew
 
