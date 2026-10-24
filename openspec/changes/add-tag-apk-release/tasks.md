@@ -16,5 +16,5 @@
 ## 3. 验证与授权推送
 
 - [x] 3.1 环境允许时执行 ./gradlew assembleRelease -PversionName=0.0.0-test -PversionCode=1，检查实际 APK 版本与本地签名回退；无法执行时记录具体限制，不把静态校验当成完整构建成功。
-- [ ] 3.2 用 gh 创建或核实私有 mybna134/vun-collector；准备必要源码/文档/SDK 文件的首次提交，检查暂存内容无密钥、无本地工具目录或构建产物，push main 且不创建/推送 tag，不覆盖既有远端历史。
+- [ ] 3.2 用 gh 创建或核实公开 mybna134/vun-collector（用户确认保持公开）；准备必要源码/文档/SDK 文件的首次提交，检查暂存内容无密钥、无本地工具目录或构建产物，push main 且不创建/推送 tag，不覆盖既有远端历史。
 - [ ] 3.3 记录新增/修改文件、执行结果、假设与未验证项，给出维护者手工配置 Secrets 及触发步骤；验证远端 main 包含 workflow，明确尚未实际运行 tag 发布。

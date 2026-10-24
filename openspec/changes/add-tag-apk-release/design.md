@@ -65,3 +65,5 @@ workflow keystore 路径固定为 RUNNER_TEMP/release-keystore.jks。用步骤�
 3. 环境允许时执行用户给定本地 release 命令并检查版本及 fallback；用现有本地 key 验证兼容性，不打印秘密。
 4. 准备不含密钥的初始提交并 push 到授权仓库；维护者自行设置四个 Secrets，再自行推送版本 tag。
 5. 回滚只恢复新增/修改文件；不删除远端 Release、tag 或密钥，不更改 applicationId/签名身份。
+
+用户实施确认：2026-10-24 明确要求保持 mybna134/vun-collector 公开，覆盖以上私有默认值。

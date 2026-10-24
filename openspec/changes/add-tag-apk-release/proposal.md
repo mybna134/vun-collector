@@ -31,3 +31,5 @@
 计划仅增加 workflow、发布说明文档并修改 app/build.gradle.kts 与 .gitignore；不升级 Gradle、AGP、Kotlin 或 Android 依赖。工具链保持 Gradle 9.5.1 / AGP 8.13.2，CI 使用 JDK 17；安装 SDK 36、NDK 29.0.14206865 和 CMake 3.22.1。没有 flavor 或 ABI 拆分配置，构建一个含既有原生库的 release APK。
 
 当前没有 README.md 或 .github 目录，不覆盖已有文件。GitHub CLI 已登录 mybna134 且官方 releases/latest API 查询成功：actions/checkout v7.0.1、actions/setup-java v6.1.0、gradle/actions v6.4.0，计划分别使用 v7 / v6 / v6。actionlint 未安装；可用 YAML 检查替代，并如实记录本地 Gradle/socket 限制及远端执行未验证情况。
+
+用户实施确认：2026-10-24 明确要求保持 mybna134/vun-collector 公开，覆盖以上私有默认值。
