@@ -99,3 +99,5 @@ CI 必须配置全部 Secrets，并验证实际签名，绝不会将本地 unsig
 完整 Gradle 构建未完成：用户指定的命令在 wrapper 写入只读用户缓存的 `.zip.lck` 时失败；改用 `/tmp/vun-collector-gradle` 与已有 Gradle 可执行文件后，仍在启动阶段因 `Could not determine a usable wildcard IP for this machine` 失败。以上静态/隔离检查不等同完整 Android 构建，远端 tag 签名发行尚未触发。
 
 抽取实际 Gradle 版本与签名输入代码，以 Kotlin 编译并执行 12 组隔离用例，默认/覆盖/非法参数、无签名、本地配置、环境优先、部分配置检查通过；仅使用人工文件及占位密码。静态确认验证任务只挂接 packageRelease，不挂接 debug。这些检查未验证完整 Gradle DSL 或真实签名打包。
+
+2026-10-24 用户确认保持公开后，已推送 main 到 https://github.com/mybna134/vun-collector 。远端提交 41d960b 与本地一致；GitHub API 返回的 workflow blob SHA 与本地 hash-object 一致。发布副本共 108 个文件通过文件名、大小及凭据模式检查；未包含 keystore、签名属性、本地工具目录或构建产物。未创建或推送 tag，未配置真实 Secrets，未触发实际发行。原工作区 Git 元数据只读，提交与推送使用 /tmp/vun-collector-publish 副本完成。
