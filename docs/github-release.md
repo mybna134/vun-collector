@@ -1,6 +1,6 @@
 # Tag 自动发布 APK
 
-项目为原生 Android Kotlin/Compose，应用模块 `app`，applicationId `com.sportsmonitor.logger`。工具链保持 Gradle 9.5.1、AGP 8.13.2、JDK 17，CI 显式安装 SDK 36、NDK 29.0.14206865 和 CMake 3.22.1。无 flavor 或 ABI 拆分；一个 Release APK 包含现有原生库。
+项目为原生 Android Kotlin/Compose，应用模块 `app`，applicationId `com.collector.vun`。工具链保持 Gradle 9.5.1、AGP 8.13.2、JDK 17，CI 显式安装 SDK 36、NDK 29.0.14206865 和 CMake 3.22.1。无 flavor 或 ABI 拆分；一个 Release APK 包含现有原生库。
 
 ## 先配置签名 Secrets
 

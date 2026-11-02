@@ -68,7 +68,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.sportsmonitor.logger"
+        applicationId = "com.collector.vun"
         minSdk = 29
         targetSdk = 35
         versionCode = requestedVersionCode
@@ -96,6 +96,9 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    testOptions {
+        unitTests.isReturnDefaultValues = true
     }
     packaging {
         jniLibs.useLegacyPackaging = true

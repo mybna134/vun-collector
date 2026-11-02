@@ -51,7 +51,7 @@ class ProbeIntegrationTest {
         val second = JSONObject(DeviceCollector.collectReport(context))
         assertEquals(setOf("hm"), first.keys().asSequence().toSet())
         val hm = first.getJSONObject("hm")
-        assertEquals(setOf("physicPixel", "logicPixel", "isRoot", "osType", "IMEI", "blMac",
+        assertEquals(setOf("physicPixel", "logicPixel", "osType", "IMEI", "blMac",
             "cpuModel", "deviceName", "appInstallTime", "androidId", "DeviceId", "appUpdateTime",
             "wifiMac", "CustomDeviceId", "osVersion"), hm.keys().asSequence().toSet())
         for (key in hm.keys()) assertTrue(hm.get(key) is String)
@@ -68,7 +68,9 @@ class ProbeIntegrationTest {
         assertEquals("中文 {,}", filtered.getString("device"))
         assertTrue(filtered.isNull("nullValue"))
         val nested = filtered.getJSONArray("nested").getJSONObject(0)
-        assertFalse(nested.has("nonce"))
+        // Runtime names are filtered only at the documented root paths; nested
+        // observation fields must survive unchanged.
+        assertTrue(nested.has("nonce"))
         assertTrue(nested.getBoolean("ok"))
         assertEquals(2, nested.getInt("count"))
         assertThrows(org.json.JSONException::class.java) { ProbeJson.sanitizeGeePlain("not json") }

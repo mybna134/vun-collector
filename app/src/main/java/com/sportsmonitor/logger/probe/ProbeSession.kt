@@ -4,7 +4,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.io.OutputStream
 
-enum class ProbeTool(val prefix: String) { GEE("gee_plain_"), DEVICE("device_info_") }
+enum class ProbeTool(val prefix: String) {
+    GEE("gee_plain_"),
+    DEVICE("device_info_"),
+    GEO("other_info_"),
+}
 enum class ProbePhase { IDLE, GENERATING, READY, EXPORTING, ERROR }
 data class ProbeResult(val version: Long, val generatedAt: Long, val json: String)
 data class ProbeState(
@@ -26,13 +30,20 @@ data class ProbeExport(val tool: ProbeTool, val result: ProbeResult) {
 class ProbeSession {
     private val mutableGee = MutableStateFlow(ProbeState())
     private val mutableDevice = MutableStateFlow(ProbeState())
+    private val mutableGeo = MutableStateFlow(ProbeState())
     private val mutableExport = MutableStateFlow<ProbeExport?>(null)
     val gee = mutableGee.asStateFlow()
     val device = mutableDevice.asStateFlow()
+    val geo = mutableGeo.asStateFlow()
     val exporting = mutableExport.asStateFlow()
     private var version = 0L
     private var writing = false
-    private fun state(tool: ProbeTool) = if (tool == ProbeTool.GEE) mutableGee else mutableDevice
+    private val states = mapOf(
+        ProbeTool.GEE to mutableGee,
+        ProbeTool.DEVICE to mutableDevice,
+        ProbeTool.GEO to mutableGeo,
+    )
+    private fun state(tool: ProbeTool) = states.getValue(tool)
 
     @Synchronized fun beginGeneration(tool: ProbeTool): Boolean {
         if (!state(tool).value.canGenerate) return false

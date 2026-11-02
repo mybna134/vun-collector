@@ -58,6 +58,18 @@ class ProbeSessionTest {
         assertEquals("device_info_13.json", session.beginExport(ProbeTool.DEVICE)!!.name)
     }
 
+    @Test fun otherInfoExportUsesTimestampedNameAndDropsFailedReplacement() {
+        val session = ProbeSession()
+        assertTrue(session.beginGeneration(ProbeTool.GEO))
+        session.completeGeneration(ProbeTool.GEO, "{\"city\":\"石家庄市\"}", 99)
+        assertEquals("other_info_99.json", session.beginExport(ProbeTool.GEO)!!.name)
+        session.completeExport(session.claimExport()!!)
+        assertTrue(session.beginGeneration(ProbeTool.GEO))
+        session.failGeneration(ProbeTool.GEO)
+        assertFalse(session.geo.value.canExport)
+        assertNull(session.beginExport(ProbeTool.GEO))
+    }
+
     @Test fun cancelAndWriteFailuresAllowSameLatestResultToRetry() {
         val session = ProbeSession()
         session.beginGeneration(ProbeTool.DEVICE)

@@ -157,7 +157,7 @@ jobs:
           line = next((x for x in (Path(os.environ['RUNNER_TEMP']) / 'apk-badging.txt').read_text().splitlines()
                        if x.startswith('package: ')), '')
           fields = dict(re.findall(r"(\w+)='([^']*)'", line))
-          expected = {'name': 'com.sportsmonitor.logger', 'versionName': os.environ['VERSION_NAME'],
+          expected = {'name': 'com.collector.vun', 'versionName': os.environ['VERSION_NAME'],
                       'versionCode': os.environ['VERSION_CODE']}
           if any(fields.get(k) != v for k, v in expected.items()):
               raise SystemExit('::error::APK applicationId or version does not match the requested release')

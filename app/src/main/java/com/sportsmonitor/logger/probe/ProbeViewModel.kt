@@ -1,6 +1,8 @@
 package com.sportsmonitor.logger.probe
 
 import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import android.provider.DocumentsContract
 import androidx.lifecycle.AndroidViewModel
@@ -11,19 +13,37 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.TimeoutCancellationException
 import org.json.JSONObject
 import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.Executors
 
-class ProbeViewModel(application: Application) : AndroidViewModel(application) {
+class ProbeViewModel internal constructor(
+    application: Application,
+    private val preferences: SharedPreferences,
+    private val locationAwaiter: LocationAwaiter = LocationAwaiter(application),
+    private val session: ProbeSession = ProbeSession(),
+) : AndroidViewModel(application) {
+    constructor(application: Application) : this(
+        application,
+        application.getSharedPreferences("geo_city", Context.MODE_PRIVATE),
+    )
+
     private val app = application
-    private val session = ProbeSession()
     val gee = session.gee
     val device = session.device
+    val geo = session.geo
     val exporting = session.exporting
+    private val mutableAmapKey = MutableStateFlow(
+        resolveAmapKey(preferences.getString(AMAP_WEB_KEY, null))
+    )
+    val amapKey = mutableAmapKey.asStateFlow()
+    internal var readSimOperator: () -> String? = { SimOperator.read(app) }
     val unavailable = GeeSdk.unavailableReason(app)
     private val notifications = Channel<String>(Channel.BUFFERED)
     val messages = notifications.receiveAsFlow()
@@ -35,14 +55,57 @@ class ProbeViewModel(application: Application) : AndroidViewModel(application) {
         if (!session.beginGeneration(ProbeTool.GEE)) return
         viewModelScope.launch {
             try {
+                locationAwaiter.await()
                 val token = withContext(sdkDispatcher) { GeeSdk.generate(app) }
                 val json = withContext(Dispatchers.Default) { ProbeJson.decrypt(token) }
+                ProbeJson.requireValidLocation(json)
                 session.completeGeneration(ProbeTool.GEE, json)
                 message("GeeToken 生成成功$permissionWarning")
             } catch (error: Throwable) {
                 session.failGeneration(ProbeTool.GEE)
-                rethrowFatal(error)
-                message("GeeToken 生成失败：${describe(error)}$permissionWarning")
+                if (error is CancellationException && error !is TimeoutCancellationException) throw error
+                val detail = if (error is TimeoutCancellationException) {
+                    "定位超时，请确保已开启精确定位并移至室外后重试"
+                } else {
+                    describe(error)
+                }
+                message("GeeToken 生成失败：$detail$permissionWarning")
+            }
+        }
+    }
+
+    fun updateAmapKey(value: String) {
+        mutableAmapKey.value = value
+        preferences.edit().putString(AMAP_WEB_KEY, value).apply()
+    }
+
+    fun fetchCity() {
+        val key = mutableAmapKey.value
+        if (key.trim().isEmpty()) {
+            message("请先填写高德 Web 服务 Key")
+            return
+        }
+        if (!session.beginGeneration(ProbeTool.GEO)) return
+        viewModelScope.launch {
+            try {
+                val location = locationAwaiter.await()
+                val cityJson = withContext(Dispatchers.IO) {
+                    GeoCity.lookup(key, location.longitude, location.latitude)
+                }
+                val operator = readSimOperator()
+                val json = GeoCity.attachCarrier(cityJson, operator)
+                val city = GeoCity.cityFromExport(json)
+                session.completeGeneration(ProbeTool.GEO, json)
+                message(GeoCity.collectionMessage(city, operator))
+            } catch (error: Throwable) {
+                session.failGeneration(ProbeTool.GEO)
+                if (error is CancellationException && error !is TimeoutCancellationException) throw error
+                val detail = if (error is TimeoutCancellationException) {
+                    "定位超时，请确保已开启精确定位并移至室外后重试"
+                } else {
+                    GeoCity.redact(describe(error), key)
+                }
+                message("城市获取失败：$detail")
             }
         }
     }
@@ -105,6 +168,12 @@ class ProbeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     companion object {
+        const val DEFAULT_AMAP_WEB_KEY = "3223389267b46eb28d4559ece915670b"
+        const val AMAP_WEB_KEY = "amap_web_key"
+
+        fun resolveAmapKey(storedKey: String?): String =
+            if (storedKey.isNullOrBlank()) DEFAULT_AMAP_WEB_KEY else storedKey
+
         // JNI has no cancellation API. Keep one process-wide worker and class loader.
         private val sdkDispatcher = Executors.newSingleThreadExecutor { runnable ->
             Thread(runnable, "geetest-collector").apply { isDaemon = true }

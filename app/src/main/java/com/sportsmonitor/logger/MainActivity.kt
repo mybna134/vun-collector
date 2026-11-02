@@ -51,6 +51,7 @@ import androidx.core.content.ContextCompat
 import android.content.pm.PackageManager
 import com.sportsmonitor.logger.probe.ProbeViewModel
 import com.sportsmonitor.logger.probe.ProbePage
+import com.sportsmonitor.logger.probe.GeoPage
 import com.sportsmonitor.logger.probe.ProbeTool
 import com.sportsmonitor.logger.data.RecordingStatus
 import com.sportsmonitor.logger.data.RecordingSummary
@@ -79,15 +80,21 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
     var historyDetailId by rememberSaveable { mutableStateOf<String?>(null) }
     var selectedTab by rememberSaveable { androidx.compose.runtime.mutableIntStateOf(0) }
     var requestedGeneration by rememberSaveable { mutableStateOf(false) }
+    var requestedGeo by rememberSaveable { mutableStateOf(false) }
     val gee by probe.gee.collectAsState()
     val device by probe.device.collectAsState()
+    val geo by probe.geo.collectAsState()
+    val amapKey by probe.amapKey.collectAsState()
     val pendingProbeExport by probe.exporting.collectAsState()
     var exportId by rememberSaveable { mutableStateOf<String?>(null) }
     val snackbar = remember { SnackbarHostState() }
     fun generate() {
-        val denied = listOf(Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_FINE_LOCATION)
-            .filter { ContextCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED }
-        probe.generate(if (denied.isEmpty()) "" else " · 权限未全部授予，部分字段可能缺失")
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            vm.showMessage("需要精确定位权限")
+            return
+        }
+        val phoneWarning = if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) "" else " · 电话权限未授予，部分字段可能缺失"
+        probe.generate(phoneWarning)
     }
     val probePermissions = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
         if (requestedGeneration) generate()
@@ -100,6 +107,33 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
         probe.beginExport(tool)?.let { export ->
             try { probeDocument.launch(export.name) }
             catch (error: Exception) { probe.cancelExport(error.message ?: "无法打开文件选择器") }
+        }
+    }
+    val geoPermissions = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+        if (requestedGeo &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        ) {
+            probe.fetchCity()
+        } else if (requestedGeo) {
+            vm.showMessage("需要精确定位权限")
+        }
+        requestedGeo = false
+    }
+    val fetchGeo: () -> Unit = {
+        val missing = listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.READ_PHONE_STATE,
+        ).filter {
+            ContextCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED
+        }
+        val locationGranted = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.ACCESS_FINE_LOCATION,
+        ) == PackageManager.PERMISSION_GRANTED
+        if (locationGranted && missing.isEmpty()) probe.fetchCity()
+        else {
+            requestedGeo = true
+            geoPermissions.launch(missing.toTypedArray())
         }
     }
     val generateProbe: () -> Unit = {
@@ -143,7 +177,7 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
         snackbarHost = { SnackbarHost(snackbar) },
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).padding(16.dp)) {
-            val tabs = listOf("运动采集", "GeeToken", "DeviceInfo")
+            val tabs = listOf("运动采集", "GeeToken", "DeviceInfo", "其他信息")
             PrimaryScrollableTabRow(selectedTabIndex = selectedTab, edgePadding = 0.dp) {
                 tabs.forEachIndexed { index, title ->
                     Tab(selected = selectedTab == index, onClick = {
@@ -161,6 +195,8 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
                     onGenerate = generateProbe, onExport = { exportProbe(ProbeTool.GEE) })
                 2 -> ProbePage("DeviceInfo", device, pendingProbeExport != null,
                     onGenerate = probe::collectDevice, onExport = { exportProbe(ProbeTool.DEVICE) })
+                3 -> GeoPage(geo, amapKey, pendingProbeExport != null, probe::updateAmapKey, fetchGeo,
+                    onExport = { exportProbe(ProbeTool.GEO) })
                 else -> RecordingPage(live,
                     onStart = {
                         val requested = mutableListOf(Manifest.permission.ACTIVITY_RECOGNITION,
