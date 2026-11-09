@@ -1,64 +1,18 @@
 package com.sportsmonitor.logger.probe
 
-import java.net.HttpURLConnection
-import java.net.URL
-import java.net.URLEncoder
-import java.util.Locale
+import com.sportsmonitor.logger.location.AmapFix
 
-/** Amap reverse-geocode city, matching the official client's getCity() result. */
+/** Exports the AMap Android SDK reverse-geocode result without changing its coordinates. */
 object GeoCity {
-    const val radiusMeters = 200
-    const val endpoint = "https://restapi.amap.com/v3/geocode/regeo"
-
-    fun resolveCityName(city: String?, province: String?): String {
-        val named = city?.trim().orEmpty()
-        if (named.isNotEmpty()) return named
-        val fallback = province?.trim().orEmpty()
-        if (fallback.isNotEmpty()) return fallback
-        throw IllegalStateException("逆地理结果没有城市名")
-    }
-
-    fun regeoUrl(key: String, longitude: Double, latitude: Double): String {
-        require(key.isNotBlank()) { "请先填写高德 Web 服务 Key" }
-        require(latitude in -90.0..90.0 && longitude in -180.0..180.0) { "定位坐标无效" }
-        fun enc(value: String) = URLEncoder.encode(value, Charsets.UTF_8.name())
-        val location = "${formatCoord(longitude)},${formatCoord(latitude)}"
-        return "$endpoint?key=${enc(key.trim())}&location=${enc(location)}" +
-            "&radius=$radiusMeters&extensions=base&coordsys=gps"
-    }
-
-    fun parseRegeo(body: String): ParsedRegeo {
-        val root = Json.parse(body) as? Json.Obj ?: throw IllegalStateException("逆地理响应不是 JSON 对象")
-        val status = root.string("status")
-        if (status != "1") {
-            val info = root.string("info")?.takeIf { it.isNotBlank() } ?: "逆地理失败"
-            throw IllegalStateException(info)
-        }
-        val component = root.obj("regeocode")?.obj("addressComponent")
-            ?: throw IllegalStateException("逆地理响应缺少 addressComponent")
-        val city = when (val value = component.fields["city"]) {
-            is Json.Str -> value.value
-            is Json.Arr, null -> ""
-            else -> ""
-        }
-        return ParsedRegeo(
-            city = resolveCityName(city, component.string("province")),
-            province = component.string("province").orEmpty(),
-            district = when (val value = component.fields["district"]) {
-                is Json.Str -> value.value
-                else -> ""
-            },
-        )
-    }
-
-    fun exportJson(parsed: ParsedRegeo, latitude: Double, longitude: Double): String = buildString {
-        append("{\"city\":").append(jsonString(parsed.city))
-        append(",\"province\":").append(jsonString(parsed.province))
-        append(",\"district\":").append(jsonString(parsed.district))
-        append(",\"latitude\":").append(formatCoord(latitude))
-        append(",\"longitude\":").append(formatCoord(longitude))
-        append(",\"radiusMeters\":").append(radiusMeters)
-        append(",\"coordsys\":\"gps\"}")
+    fun exportJson(fix: AmapFix): String = buildString {
+        val city = fix.city?.takeIf(String::isNotBlank)
+            ?: throw IllegalStateException("高德 SDK 未返回城市名")
+        append("{\"city\":").append(jsonString(city))
+        append(",\"province\":").append(jsonString(fix.province.orEmpty()))
+        append(",\"district\":").append(jsonString(fix.district.orEmpty()))
+        append(",\"latitude\":").append(fix.latitude)
+        append(",\"longitude\":").append(fix.longitude)
+        append(",\"coordsys\":\"GCJ02\"}")
     }
 
     /** Appends u_sign only when [operator] maps to CM, CU, or CT. */
@@ -85,33 +39,6 @@ object GeoCity {
             ?: throw IllegalStateException("城市结果无效")
     }
 
-    fun lookup(key: String, longitude: Double, latitude: Double): String {
-        val url = regeoUrl(key, longitude, latitude)
-        val connection = (URL(url).openConnection() as HttpURLConnection).apply {
-            connectTimeout = 15_000
-            readTimeout = 15_000
-            requestMethod = "GET"
-            instanceFollowRedirects = false
-        }
-        try {
-            val code = connection.responseCode
-            val stream = if (code in 200..299) connection.inputStream else connection.errorStream
-            val body = stream?.bufferedReader(Charsets.UTF_8)?.use { it.readText() }.orEmpty()
-            if (code !in 200..299) throw IllegalStateException("逆地理请求失败：$code")
-            return exportJson(parseRegeo(body), latitude, longitude)
-        } finally {
-            connection.disconnect()
-        }
-    }
-
-    fun redact(text: String, key: String): String {
-        val secret = key.trim()
-        if (secret.isEmpty()) return text
-        return text.replace(secret, "[REDACTED]").replace(URLEncoder.encode(secret, Charsets.UTF_8.name()), "[REDACTED]")
-    }
-
-    private fun formatCoord(value: Double) = String.format(Locale.US, "%.6f", value)
-
     internal fun jsonString(value: String): String = buildString {
         append('"')
         for (ch in value) {
@@ -128,12 +55,9 @@ object GeoCity {
     }
 }
 
-data class ParsedRegeo(val city: String, val province: String, val district: String)
-
 private sealed class Json {
     data class Obj(val fields: Map<String, Json>) : Json() {
         fun string(name: String) = (fields[name] as? Json.Str)?.value
-        fun obj(name: String) = fields[name] as? Obj
     }
     data class Arr(val values: List<Json>) : Json()
     data class Str(val value: String) : Json()

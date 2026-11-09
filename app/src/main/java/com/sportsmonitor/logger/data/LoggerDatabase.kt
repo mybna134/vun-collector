@@ -9,7 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
     entities = [RecordingEntity::class, SensorSampleEntity::class, LocationSampleEntity::class],
-    version = 2,
+    version = 4,
     exportSchema = false,
 )
 abstract class LoggerDatabase : RoomDatabase() {
@@ -25,6 +25,18 @@ abstract class LoggerDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE location_samples ADD COLUMN geoidSeparationMeters REAL")
             }
         }
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE location_samples ADD COLUMN source TEXT NOT NULL DEFAULT 'android_gps'")
+                db.execSQL("ALTER TABLE location_samples ADD COLUMN coordsys TEXT NOT NULL DEFAULT 'WGS84'")
+            }
+        }
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE location_samples ADD COLUMN speedMps REAL")
+                db.execSQL("ALTER TABLE location_samples ADD COLUMN bearingDeg REAL")
+            }
+        }
 
         @Volatile private var instance: LoggerDatabase? = null
 
@@ -33,7 +45,7 @@ abstract class LoggerDatabase : RoomDatabase() {
                 context.applicationContext,
                 LoggerDatabase::class.java,
                 "sensor_logger.db",
-            ).addMigrations(MIGRATION_1_2).build().also { instance = it }
+            ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4).build().also { instance = it }
         }
     }
 }

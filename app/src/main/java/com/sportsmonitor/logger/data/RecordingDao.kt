@@ -13,6 +13,7 @@ interface RecordingDao {
     @Query("SELECT * FROM recordings WHERE id = :id") suspend fun getRecording(id: String): RecordingEntity?
     @Query("SELECT * FROM recordings WHERE id = :id") fun observeRecording(id: String): Flow<RecordingEntity?>
     @Query("SELECT id FROM recordings WHERE status = 'active' LIMIT 1") suspend fun activeId(): String?
+    @Query("SELECT * FROM recordings WHERE status = 'active' LIMIT 1") suspend fun activeRecording(): RecordingEntity?
     @Query("UPDATE recordings SET status = 'interrupted', endMs = :nowMs WHERE status = 'active'")
     suspend fun interruptActive(nowMs: Long)
     @Query("UPDATE recordings SET status = 'stopped', endMs = :endMs WHERE id = :id AND status = 'active'")

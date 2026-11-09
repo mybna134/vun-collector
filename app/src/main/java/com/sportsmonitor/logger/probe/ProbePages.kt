@@ -4,12 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -39,22 +37,16 @@ fun ProbePage(title: String, state: ProbeState, exportPending: Boolean, availabl
 
 @Composable
 fun GeoPage(
+    title: String,
     state: ProbeState,
-    amapKey: String,
+    sdkStatus: String,
     exportPending: Boolean,
-    onKeyChange: (String) -> Unit,
     onFetch: () -> Unit,
     onExport: () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        OutlinedTextField(
-            value = amapKey,
-            onValueChange = onKeyChange,
-            enabled = state.canGenerate,
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("高德 Web 服务 Key") },
-            singleLine = true,
-        )
+        Text(title, style = MaterialTheme.typography.headlineSmall)
+        Text(sdkStatus)
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Button(onClick = onFetch, enabled = state.canGenerate) {
                 if (state.phase == ProbePhase.GENERATING) {

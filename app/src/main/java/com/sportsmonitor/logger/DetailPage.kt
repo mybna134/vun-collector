@@ -59,9 +59,9 @@ internal fun ColumnScope.DetailPage(vm: LoggerViewModel, onBack: () -> Unit, onE
         for (type in SampleRules.sensorTypes) {
             OutlinedButton(onClick = { vm.chooseSource(type) }) { Text(SampleRules.name(type)) }
         }
-        OutlinedButton(onClick = { vm.chooseSource(null) }) { Text("GPS") }
+        OutlinedButton(onClick = { vm.chooseSource(null) }) { Text("位置") }
     }
-    Text("当前数据源：${vm.selectedSource?.let(SampleRules::name) ?: "GPS"}")
+    Text("当前数据源：${vm.selectedSource?.let(SampleRules::name) ?: "位置"}")
     Spacer(Modifier.height(6.dp))
     LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (vm.selectedSource == null) {
@@ -70,8 +70,9 @@ internal fun ColumnScope.DetailPage(vm: LoggerViewModel, onBack: () -> Unit, onE
                     modifier = Modifier.fillMaxWidth()) {
                     Column(Modifier.fillMaxWidth()) {
                         Text("${formatTime(sample.timestampEpochMs)}${if (sample.edited) " · 已修改" else ""}")
-                        Text("${sample.latitude}, ${sample.longitude} · ±${sample.accuracyMeters} m")
-                        Text(sample.altitudeMeters?.let { "海拔 %.2f m · %s (WGS84)".format(it, sample.altitudeSource) } ?: "海拔不可用")
+                        Text("${sample.latitude}, ${sample.longitude} · ±${sample.accuracyMeters} m · ${sample.coordsys}")
+                        Text("来源：${sample.source}")
+                        Text(sample.altitudeMeters?.let { "海拔 %.2f m".format(it) } ?: "海拔不可用")
                     }
                 }
             }
@@ -95,7 +96,7 @@ internal fun ColumnScope.DetailPage(vm: LoggerViewModel, onBack: () -> Unit, onE
     })
     if (confirmDelete) AlertDialog(
         onDismissRequest = { confirmDelete = false }, title = { Text("删除整次记录？") },
-        text = { Text("这会同时删除所有传感器和 GPS 采样点。") },
+        text = { Text("这会同时删除所有传感器和位置采样点。") },
         confirmButton = { TextButton(onClick = { confirmDelete = false; vm.delete(record.id, onDeleted) }) { Text("删除") } },
         dismissButton = { TextButton(onClick = { confirmDelete = false }) { Text("取消") } },
     )
@@ -160,7 +161,7 @@ private fun GpsDialog(sample: LocationSampleEntity, onDismiss: () -> Unit, onSav
     var lon by remember(sample.id) { mutableStateOf(sample.longitude.toString()) }
     var accuracy by remember(sample.id) { mutableStateOf(sample.accuracyMeters.toString()) }
     var error by remember { mutableStateOf<String?>(null) }
-    AlertDialog(onDismissRequest = onDismiss, title = { Text("修改 GPS 采样点") },
+    AlertDialog(onDismissRequest = onDismiss, title = { Text("修改位置采样点") },
         text = {
             Column {
                 NumberField("UTC 时间戳（毫秒）", time) { time = it }

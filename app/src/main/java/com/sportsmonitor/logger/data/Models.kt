@@ -1,6 +1,7 @@
 package com.sportsmonitor.logger.data
 
 import androidx.room.Entity
+import androidx.room.ColumnInfo
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -62,7 +63,11 @@ data class LocationSampleEntity(
     val latitude: Double,
     val longitude: Double,
     val accuracyMeters: Double,
+    @ColumnInfo(defaultValue = "'android_gps'") val source: String = "android_gps",
+    @ColumnInfo(defaultValue = "'WGS84'") val coordsys: String = "WGS84",
     val altitudeMeters: Double? = null,
+    val speedMps: Double? = null,
+    val bearingDeg: Double? = null,
     val altitudeSource: String? = null,
     val altitudeTimestampEpochMs: Long? = null,
     val altitudeMslMeters: Double? = null,

@@ -14,8 +14,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import android.location.OnNmeaMessageListener
 import android.os.Handler
@@ -26,12 +24,19 @@ import android.os.SystemClock
 import androidx.core.app.ServiceCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.sportsmonitor.logger.BuildConfig
 import com.sportsmonitor.logger.LoggerApplication
 import com.sportsmonitor.logger.MainActivity
 import com.sportsmonitor.logger.data.LocationSampleEntity
 import com.sportsmonitor.logger.data.RecordingEntity
 import com.sportsmonitor.logger.data.SampleRules
 import com.sportsmonitor.logger.data.SensorSampleEntity
+import com.sportsmonitor.logger.location.AmapConsent
+import com.sportsmonitor.logger.location.AmapFix
+import com.sportsmonitor.logger.location.AmapLocationSource
+import com.sportsmonitor.logger.settings.SettingsStore
+import com.amap.api.location.AMapLocation
+import com.amap.api.location.AMapLocationClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -46,11 +51,12 @@ import kotlinx.coroutines.withTimeoutOrNull
 import org.json.JSONObject
 import java.util.UUID
 
-class RecordingService : Service(), SensorEventListener, LocationListener {
+class RecordingService : Service(), SensorEventListener {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val dao by lazy { (application as LoggerApplication).database.recordingDao() }
     private val sensorManager by lazy { getSystemService(SENSOR_SERVICE) as SensorManager }
     private val locationManager by lazy { getSystemService(LOCATION_SERVICE) as LocationManager }
+    private var amapClient: AMapLocationClient? = null
     private var activeId: String? = null
     private var starting = false
     private var stopping = false
@@ -65,6 +71,7 @@ class RecordingService : Service(), SensorEventListener, LocationListener {
     private var stepTracker = StepTracker()
     private val altitude = GnssAltitude()
     private val pendingLocations = LinkedHashMap<LocationSampleEntity, Job>()
+    private val pendingLocationTypes = LinkedHashMap<LocationSampleEntity, Int>()
     private var nmeaRegistered = false
     private val nmeaListener = OnNmeaMessageListener { message, timestamp ->
         if (activeId != null && !stopping && timestamp >= wallAnchorMs) altitude.add(message, timestamp)
@@ -76,17 +83,15 @@ class RecordingService : Service(), SensorEventListener, LocationListener {
         altitude.clear()
     }
 
-    private fun enqueueLocation(point: LocationSampleEntity, gpsAltitude: Double?) {
-        val reading = altitude.resolve(point.originalLocationTimeMs, gpsAltitude)
-        events?.trySend(QueuedSample.LocationPoint(point.copy(
-            altitudeMeters = reading.meters, altitudeSource = reading.source,
-            altitudeTimestampEpochMs = reading.timestampMs, altitudeMslMeters = reading.mslMeters,
-            geoidSeparationMeters = reading.geoidMeters,
-        )))
-        val display = reading.meters?.let { "%.2f m · %s (WGS84)".format(it, reading.source) } ?: "海拔不可用"
+    private fun enqueueLocation(point: LocationSampleEntity, locationType: Int) {
+        val sdkAltitude = point.altitudeMeters
+        events?.trySend(QueuedSample.LocationPoint(
+            withAmapAltitude(point, locationType == AMapLocation.LOCATION_TYPE_GPS, altitude)
+        ))
+        val display = sdkAltitude?.let { "%.2f m".format(it) } ?: "海拔不可用"
         LiveRecordingState.update(LiveRecordingState.ALTITUDE,
-            if (reading.meters != null) "正常" else "海拔不可用", display, point.timestampEpochMs)
-        val status = reading.source ?: "海拔不可用"
+            if (sdkAltitude != null) "正常" else "海拔不可用", display, point.timestampEpochMs)
+        val status = if (sdkAltitude != null) "正常" else "海拔不可用"
         if (statuses[LiveRecordingState.ALTITUDE] != status) setStatus(LiveRecordingState.ALTITUDE, status)
     }
 
@@ -95,7 +100,7 @@ class RecordingService : Service(), SensorEventListener, LocationListener {
         pendingLocations.clear()
         for ((point, job) in pending) {
             job.cancel()
-            enqueueLocation(point, point.altitudeMeters)
+            enqueueLocation(point, pendingLocationTypes.remove(point) ?: -1)
         }
     }
 
@@ -111,35 +116,54 @@ class RecordingService : Service(), SensorEventListener, LocationListener {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             ACTION_STOP -> scope.launch { stopRecording() }
-            ACTION_START -> if (!starting && activeId == null) {
-                starting = true
+            ACTION_START -> startForegroundRecording(createIfMissing = true)
+            null -> startForegroundRecording(createIfMissing = false)
+        }
+        return START_STICKY
+    }
+
+    private fun startForegroundRecording(createIfMissing: Boolean) {
+        if (starting || activeId != null) return
+        starting = true
+        try {
+            val hasGpsPermission = hasFineLocation()
+            val types = (if (Build.VERSION.SDK_INT >= 34) ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH else 0) or
+                (if (hasGpsPermission) ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION else 0)
+            ServiceCompat.startForeground(this, NOTIFICATION_ID, notification(), types)
+            scope.launch {
                 try {
-                    val hasGpsPermission = hasFineLocation()
-                    val types = (if (Build.VERSION.SDK_INT >= 34) ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH else 0) or
-                        (if (hasGpsPermission) ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION else 0)
-                    ServiceCompat.startForeground(this, NOTIFICATION_ID, notification(), types)
-                    scope.launch { startRecording() }
-                } catch (error: RuntimeException) {
-                    starting = false
+                    if (withContext(Dispatchers.IO) { dao.activeRecording() } != null || createIfMissing) {
+                        startRecording()
+                    } else {
+                        ServiceCompat.stopForeground(this@RecordingService, ServiceCompat.STOP_FOREGROUND_REMOVE)
+                        stopSelf()
+                        starting = false
+                    }
+                } catch (_: Exception) {
+                    ServiceCompat.stopForeground(this@RecordingService, ServiceCompat.STOP_FOREGROUND_REMOVE)
                     stopSelf()
+                    starting = false
                 }
             }
+        } catch (_: RuntimeException) {
+            starting = false
+            stopSelf()
         }
-        return START_NOT_STICKY
     }
 
     private suspend fun startRecording() {
         try {
-            val now = System.currentTimeMillis()
+            val existing = withContext(Dispatchers.IO) { dao.activeRecording() }
+            val now = existing?.startMs ?: System.currentTimeMillis()
             altitude.clear()
             lastGpsLocationTimeMs = 0L
             lastGpsMs = null
             stepTracker = StepTracker()
             statuses.clear()
             statuses[LiveRecordingState.ALTITUDE] = "等待海拔"
-            wallAnchorMs = now
+            wallAnchorMs = System.currentTimeMillis()
             elapsedAnchorNs = SystemClock.elapsedRealtimeNanos()
-            val id = UUID.randomUUID().toString()
+            val id = existing?.id ?: UUID.randomUUID().toString()
             val canSteps = hasPermission(Manifest.permission.ACTIVITY_RECOGNITION)
             for (type in SampleRules.sensorTypes) {
                 val key = type.toString()
@@ -150,13 +174,14 @@ class RecordingService : Service(), SensorEventListener, LocationListener {
                 }
             }
             statuses[LiveRecordingState.GPS] = when {
-                !hasFineLocation() -> "精确定位未授权"
-                !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) -> "GPS 已关闭"
-                else -> "等待 GPS"
+                amapUnavailableReason() != null -> amapUnavailableReason()!!
+                else -> "等待高德定位"
             }
-            withContext(Dispatchers.IO) {
-                check(dao.activeId() == null) { "已有采集任务" }
-                dao.insertRecording(RecordingEntity(id = id, name = "记录 $now", startMs = now, sourceStatusesJson = statusJson()))
+            if (existing == null) {
+                withContext(Dispatchers.IO) {
+                    check(dao.activeId() == null) { "已有采集任务" }
+                    dao.insertRecording(RecordingEntity(id = id, name = "记录 $now", startMs = now, sourceStatusesJson = statusJson()))
+                }
             }
             activeId = id
             LiveRecordingState.begin(id, statuses)
@@ -170,7 +195,7 @@ class RecordingService : Service(), SensorEventListener, LocationListener {
                     SensorManager.SENSOR_DELAY_NORMAL else SensorManager.SENSOR_DELAY_UI
                 if (!sensorManager.registerListener(this, sensor, rate)) setStatus(type.toString(), "注册失败")
             }
-            registerGps()
+            registerAmap()
             gpsMonitorJob = scope.launch {
                 while (isActive) {
                     delay(1000)
@@ -186,27 +211,24 @@ class RecordingService : Service(), SensorEventListener, LocationListener {
                             }
                         }
                     }
-                    if (!hasFineLocation()) {
-                        locationManager.removeUpdates(this@RecordingService)
+                    val unavailable = amapUnavailableReason()
+                    if (unavailable != null) {
+                        stopAmap()
                         unregisterNmea()
-                        if (statuses[LiveRecordingState.GPS] != "精确定位未授权")
-                            setStatus(LiveRecordingState.GPS, "精确定位未授权")
-                    } else if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                        if (statuses[LiveRecordingState.GPS] != "GPS 已关闭")
-                            setStatus(LiveRecordingState.GPS, "GPS 已关闭")
-                    } else if (statuses[LiveRecordingState.GPS] == "精确定位未授权" ||
-                        statuses[LiveRecordingState.GPS] == "GPS 已关闭") {
-                        setStatus(LiveRecordingState.GPS, "等待 GPS")
-                        registerGps()
+                        if (statuses[LiveRecordingState.GPS] != unavailable)
+                            setStatus(LiveRecordingState.GPS, unavailable)
+                    } else if (amapClient == null) {
+                        setStatus(LiveRecordingState.GPS, "等待高德定位")
+                        registerAmap()
                     } else if ((lastGpsMs == null || System.currentTimeMillis() - lastGpsMs!! > 3000) &&
-                        statuses[LiveRecordingState.GPS] != "等待 GPS") {
-                        setStatus(LiveRecordingState.GPS, "等待 GPS")
+                        statuses[LiveRecordingState.GPS] == "正常") {
+                        setStatus(LiveRecordingState.GPS, "等待高德定位")
                     }
                 }
             }
         } catch (error: Exception) {
             sensorManager.unregisterListener(this)
-            locationManager.removeUpdates(this)
+            stopAmap()
             flushPendingLocations()
             unregisterNmea()
             events?.close()
@@ -214,29 +236,48 @@ class RecordingService : Service(), SensorEventListener, LocationListener {
             activeId?.let { id -> withContext(Dispatchers.IO) { dao.interruptActive(System.currentTimeMillis()) } }
             activeId = null
             LiveRecordingState.end()
+            ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
             stopSelf()
         } finally {
             starting = false
         }
     }
 
-    private fun registerGps() {
-        if (!hasFineLocation() || !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) return
+    private fun registerAmap() {
+        if (amapClient != null) return
+        if (amapUnavailableReason() != null) return
         try {
-            if (!nmeaRegistered) nmeaRegistered = locationManager.addNmeaListener(nmeaListener, Handler(Looper.getMainLooper()))
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 0f, this, Looper.getMainLooper())
+            if (!nmeaRegistered && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+                nmeaRegistered = locationManager.addNmeaListener(nmeaListener, Handler(Looper.getMainLooper()))
+            amapClient = AmapLocationSource.startContinuous(this, ::onAmapFix) { reason ->
+                if (statuses[LiveRecordingState.GPS] != reason) setStatus(LiveRecordingState.GPS, reason)
+            }
         } catch (_: SecurityException) {
             setStatus(LiveRecordingState.GPS, "精确定位未授权")
-        } catch (_: IllegalArgumentException) {
-            setStatus(LiveRecordingState.GPS, "GPS 不可用")
+        } catch (error: Exception) {
+            setStatus(LiveRecordingState.GPS, error.message ?: "高德定位不可用")
         }
+    }
+
+    private fun amapUnavailableReason(): String? = when {
+        (SettingsStore.loadKey(this) ?: BuildConfig.AMAP_ANDROID_KEY).isBlank() -> "高德 Android SDK Key 未配置"
+        !AmapConsent.agreed(this) -> "尚未同意高德定位隐私说明"
+        ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ->
+            "精确定位未授权"
+        else -> null
+    }
+
+    private fun stopAmap() {
+        amapClient?.stopLocation()
+        amapClient?.onDestroy()
+        amapClient = null
     }
 
     private suspend fun stopRecording() {
         if (stopping) return
         stopping = true
         sensorManager.unregisterListener(this)
-        locationManager.removeUpdates(this)
+        stopAmap()
         gpsMonitorJob?.cancel()
         flushPendingLocations()
         unregisterNmea()
@@ -282,45 +323,34 @@ class RecordingService : Service(), SensorEventListener, LocationListener {
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
 
-    override fun onLocationChanged(location: Location) {
+    private fun onAmapFix(location: AmapFix) {
         val id = activeId ?: return
-        if (stopping || location.provider != LocationManager.GPS_PROVIDER) return
-        if (location.time <= lastGpsLocationTimeMs) return
-        val accuracy = if (location.hasAccuracy()) location.accuracy.toDouble() else 0.0
-        if (!SampleRules.validateLocation(location.time, location.latitude, location.longitude, accuracy)) return
+        if (stopping || location.timeMs <= lastGpsLocationTimeMs) return
+        val accuracy = location.accuracyMeters
+        if (!SampleRules.validateLocation(location.timeMs, location.latitude, location.longitude, accuracy)) return
         val point = LocationSampleEntity(
-            recordingId = id, timestampEpochMs = location.time,
-            originalLocationTimeMs = location.time, latitude = location.latitude,
+            recordingId = id, timestampEpochMs = location.timeMs,
+            originalLocationTimeMs = location.timeMs, latitude = location.latitude,
             longitude = location.longitude, accuracyMeters = accuracy,
-            altitudeMeters = if (location.hasAltitude()) location.altitude.takeIf(Double::isFinite) else null,
+            source = AmapFix.SOURCE, coordsys = AmapFix.COORD_SYS,
+            altitudeMeters = location.altitudeMeters,
+            speedMps = location.speedMps,
+            bearingDeg = location.bearingDeg,
         )
+        pendingLocationTypes[point] = location.locationType
         pendingLocations[point] = scope.launch {
             delay(350) // Let the GGA sentence for this fix arrive after Location callbacks.
             pendingLocations.remove(point)
-            if (activeId == id && !stopping) enqueueLocation(point, point.altitudeMeters)
+            val type = pendingLocationTypes.remove(point) ?: -1
+            if (activeId == id && !stopping) enqueueLocation(point, type)
         }
-        lastGpsLocationTimeMs = location.time
+        lastGpsLocationTimeMs = location.timeMs
         lastGpsMs = System.currentTimeMillis()
         LiveRecordingState.update(
             LiveRecordingState.GPS, "正常",
-            "%.6f, %.6f (±%.1f m)".format(location.latitude, location.longitude, accuracy), location.time,
+            "%.6f, %.6f (±%.1f m · GCJ-02)".format(location.latitude, location.longitude, accuracy), location.timeMs,
         )
         if (statuses[LiveRecordingState.GPS] != "正常") setStatus(LiveRecordingState.GPS, "正常")
-    }
-
-    override fun onProviderDisabled(provider: String) {
-        if (provider == LocationManager.GPS_PROVIDER) {
-            flushPendingLocations()
-            unregisterNmea()
-            setStatus(LiveRecordingState.GPS, "GPS 已关闭")
-        }
-    }
-
-    override fun onProviderEnabled(provider: String) {
-        if (provider == LocationManager.GPS_PROVIDER) {
-            setStatus(LiveRecordingState.GPS, "等待 GPS")
-            registerGps()
-        }
     }
 
     private suspend fun writeLoop(queue: Channel<QueuedSample>) {
@@ -373,7 +403,7 @@ class RecordingService : Service(), SensorEventListener, LocationListener {
         )
         return NotificationCompat.Builder(this, CHANNEL)
             .setSmallIcon(android.R.drawable.ic_menu_compass)
-            .setContentTitle("正在记录传感器与 GPS")
+            .setContentTitle("正在记录传感器与高德位置")
             .setContentText("点击返回应用；也可从通知停止")
             .setContentIntent(open)
             .addAction(android.R.drawable.ic_media_pause, "停止", stop)
@@ -383,7 +413,7 @@ class RecordingService : Service(), SensorEventListener, LocationListener {
 
     override fun onDestroy() {
         sensorManager.unregisterListener(this)
-        locationManager.removeUpdates(this)
+        stopAmap()
         gpsMonitorJob?.cancel()
         flushPendingLocations()
         unregisterNmea()

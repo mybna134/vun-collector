@@ -3,6 +3,8 @@ package com.sportsmonitor.logger
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
+import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -21,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,6 +53,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.core.content.ContextCompat
 import android.content.pm.PackageManager
 import com.sportsmonitor.logger.probe.ProbeViewModel
+import com.sportsmonitor.logger.location.AmapConsent
+import com.sportsmonitor.logger.location.AmapLocationSource
 import com.sportsmonitor.logger.probe.ProbePage
 import com.sportsmonitor.logger.probe.GeoPage
 import com.sportsmonitor.logger.probe.ProbeTool
@@ -59,6 +64,8 @@ import com.sportsmonitor.logger.data.SampleRules
 import com.sportsmonitor.logger.recording.LiveRecordingState
 import com.sportsmonitor.logger.recording.LiveSession
 import com.sportsmonitor.logger.recording.RecordingService
+import com.sportsmonitor.logger.settings.SettingsPage
+import com.sportsmonitor.logger.settings.SettingsViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -84,10 +91,19 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
     val gee by probe.gee.collectAsState()
     val device by probe.device.collectAsState()
     val geo by probe.geo.collectAsState()
-    val amapKey by probe.amapKey.collectAsState()
+    val settings = remember { SettingsViewModel(context) }
     val pendingProbeExport by probe.exporting.collectAsState()
     var exportId by rememberSaveable { mutableStateOf<String?>(null) }
     val snackbar = remember { SnackbarHostState() }
+    fun withAmapConsent(requireAmapKey: Boolean = true, action: () -> Unit) {
+        // GeeToken 预定位用 GPS，不需要高德 SDK Key
+        // 城市采集和运动记录需要高德 SDK
+        if (requireAmapKey && (BuildConfig.AMAP_ANDROID_KEY.isBlank() || !AmapConsent.agreed(context))) {
+            vm.showMessage("高德 SDK 不可用（Key 未配置或未同意隐私），该功能无法使用")
+            return
+        }
+        action()
+    }
     fun generate() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             vm.showMessage("需要精确定位权限")
@@ -177,7 +193,7 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
         snackbarHost = { SnackbarHost(snackbar) },
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).padding(16.dp)) {
-            val tabs = listOf("运动采集", "GeeToken", "DeviceInfo", "其他信息")
+            val tabs = listOf("运动采集", "GeeToken", "DeviceInfo", "其他信息", "Settings")
             PrimaryScrollableTabRow(selectedTabIndex = selectedTab, edgePadding = 0.dp) {
                 tabs.forEachIndexed { index, title ->
                     Tab(selected = selectedTab == index, onClick = {
@@ -192,18 +208,22 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
             Spacer(Modifier.height(12.dp))
             when (selectedTab) {
                 1 -> ProbePage("GeeToken", gee, pendingProbeExport != null, probe.unavailable == null,
-                    onGenerate = generateProbe, onExport = { exportProbe(ProbeTool.GEE) })
+                    onGenerate = { withAmapConsent(requireAmapKey = false, action = generateProbe) }, onExport = { exportProbe(ProbeTool.GEE) })
                 2 -> ProbePage("DeviceInfo", device, pendingProbeExport != null,
                     onGenerate = probe::collectDevice, onExport = { exportProbe(ProbeTool.DEVICE) })
-                3 -> GeoPage(geo, amapKey, pendingProbeExport != null, probe::updateAmapKey, fetchGeo,
+                3 -> GeoPage("其他信息", geo,
+                    AmapLocationSource.unavailableReason(context) ?: "高德 Android 定位 SDK 已配置",
+                    pendingProbeExport != null,
+                    { withAmapConsent(action = fetchGeo) },
                     onExport = { exportProbe(ProbeTool.GEO) })
+                4 -> SettingsPage(settings)
                 else -> RecordingPage(live,
-                    onStart = {
+                    onStart = { withAmapConsent {
                         val requested = mutableListOf(Manifest.permission.ACTIVITY_RECOGNITION,
                             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
                         if (Build.VERSION.SDK_INT >= 33) requested += Manifest.permission.POST_NOTIFICATIONS
                         permissions.launch(requested.toTypedArray())
-                    },
+                    } },
                     onStop = { RecordingService.stop(context) },
                     onList = { historyDetailId = null; historyVisible = true })
             }
@@ -236,7 +256,7 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
 
 @Composable
 private fun RecordingPage(live: LiveSession, onStart: () -> Unit, onStop: () -> Unit, onList: () -> Unit) {
-    Text("传感器与 GPS 记录", style = MaterialTheme.typography.headlineSmall)
+    Text("传感器与位置记录", style = MaterialTheme.typography.headlineSmall)
     Spacer(Modifier.height(12.dp))
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Button(onClick = if (live.recordingId == null) onStart else onStop) {
@@ -252,7 +272,7 @@ private fun RecordingPage(live: LiveSession, onStart: () -> Unit, onStop: () -> 
         items(keys) { key ->
             val reading = live.readings[key]
             val label = when (key) {
-                LiveRecordingState.GPS -> "GPS 位置"
+                LiveRecordingState.GPS -> "高德位置"
                 LiveRecordingState.ALTITUDE -> "GNSS 海拔"
                 else -> SampleRules.name(key.toInt())
             }

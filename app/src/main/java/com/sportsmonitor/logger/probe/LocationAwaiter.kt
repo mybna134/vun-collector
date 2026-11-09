@@ -1,50 +1,99 @@
 package com.sportsmonitor.logger.probe
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Looper
-import androidx.core.content.ContextCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.sportsmonitor.logger.location.AmapFix
+import com.sportsmonitor.logger.location.AmapLocationSource
+import com.sportsmonitor.logger.location.GpsFix
+import com.sportsmonitor.logger.location.GpsFixRules
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-/** Obtains a fresh GPS fix for a GeeToken generation without starting recording. */
+/** Obtains GPS fix (for GeeToken pre-location) or AMap fix (for city collection). */
 class LocationAwaiter(private val context: Context) {
-    suspend fun await(timeoutMs: Long = 30_000L): Location = withTimeout(timeoutMs) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            throw SecurityException("需要精确定位权限")
-        }
-        val manager = context.getSystemService(LocationManager::class.java)
-            ?: throw IllegalStateException("无法访问定位服务")
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            throw IllegalStateException("请开启系统定位服务")
-        }
-        suspendCancellableCoroutine { continuation ->
-            lateinit var listener: LocationListener
-            fun cleanup() = runCatching { manager.removeUpdates(listener) }
-            listener = object : LocationListener {
-                override fun onLocationChanged(location: Location) {
-                    if (location.provider != LocationManager.GPS_PROVIDER ||
-                        !location.latitude.isFinite() || !location.longitude.isFinite() ||
-                        location.latitude !in -90.0..90.0 || location.longitude !in -180.0..180.0) return
-                    if (continuation.isActive) {
-                        cleanup()
-                        continuation.resume(location)
+    private val fusedClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+
+    /** Gets a single WGS84 GPS fix for GeeToken pre-location. */
+    suspend fun await(timeoutMs: Long = 30_000L): GpsFix =
+        withContext(Dispatchers.Main.immediate) {
+            val startedAtMs = System.currentTimeMillis()
+            try {
+                withTimeout(timeoutMs) {
+                    suspendCancellableCoroutine<GpsFix> { continuation ->
+                        val request = createLocationRequest()
+                        val callback = createLocationCallback(continuation, startedAtMs)
+                        fusedClient.requestLocationUpdates(request, callback, Looper.getMainLooper())
+                            .addOnFailureListener { e ->
+                                if (continuation.isActive) {
+                                    continuation.resumeWithException(IllegalStateException("GPS 定位请求失败：${e.message ?: e.javaClass.simpleName}"))
+                                }
+                            }
+                        continuation.invokeOnCancellation {
+                            fusedClient.removeLocationUpdates(callback)
+                        }
                     }
                 }
+            } catch (e: TimeoutCancellationException) {
+                throw IllegalStateException("等待 GPS 定位（超时）")
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                throw IllegalStateException("等待 GPS 定位：${e.message ?: e.javaClass.simpleName}")
             }
-            try {
-                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1_000L, 0f, listener, Looper.getMainLooper())
-            } catch (error: Throwable) {
-                continuation.resumeWithException(error)
-                return@suspendCancellableCoroutine
-            }
-            continuation.invokeOnCancellation { cleanup() }
         }
+
+    private fun createLocationRequest(): LocationRequest {
+        return LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 0)
+            .setMinUpdateDistanceMeters(0f)
+            .build()
+    }
+
+    private fun createLocationCallback(
+        continuation: kotlinx.coroutines.CancellableContinuation<GpsFix>,
+        startedAtMs: Long
+    ): LocationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            if (!continuation.isActive) return
+            val location = locationResult.lastLocation ?: return
+            val fix = parseLocation(location, startedAtMs)
+            if (fix != null) {
+                continuation.resume(fix)
+            } else {
+                continuation.resumeWithException(IllegalStateException("GPS 定位结果无效或非实时"))
+            }
+        }
+    }
+
+    /** Gets a GCJ-02 AMap fix with city for city collection. */
+    suspend fun awaitCity(timeoutMs: Long = 30_000L): AmapFix =
+        AmapLocationSource.await(context, requireCity = true, timeoutMs = timeoutMs)
+
+    private fun parseLocation(location: android.location.Location, startedAtMs: Long): GpsFix? {
+        val now = System.currentTimeMillis()
+        if (!GpsFixRules.valid(location.time, startedAtMs, now, location.latitude, location.longitude, location.accuracy.toDouble())) {
+            return null
+        }
+        return GpsFix(
+            timeMs = location.time,
+            latitude = location.latitude,
+            longitude = location.longitude,
+            accuracyMeters = location.accuracy.toDouble(),
+            altitudeMeters = if (location.hasAltitude() && location.altitude.isFinite()) location.altitude.toDouble() else null,
+            speedMps = if (location.hasSpeed() && location.speed.isFinite()) location.speed.toDouble() else null,
+            bearingDeg = if (location.hasBearing() && location.bearing.isFinite()) location.bearing.toDouble() else null,
+            provider = location.provider,
+        )
     }
 }

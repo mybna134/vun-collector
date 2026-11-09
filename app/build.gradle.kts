@@ -40,6 +40,12 @@ val releaseSigningProblems = buildList {
         if (releaseStoreFileValue != null && releaseStoreFile?.isFile != true) add("keystore file is unavailable")
     }
 }
+val amapAndroidKey = providers.gradleProperty("amapAndroidKey")
+    .orElse(providers.environmentVariable("AMAP_ANDROID_KEY"))
+    .orElse("f594fc9e11f9d07ce81e59e0ea985de7").get().trim()
+require(amapAndroidKey.isEmpty() || amapAndroidKey.matches(Regex("[A-Za-z0-9]+"))) {
+    "amapAndroidKey must contain only letters and digits"
+}
 
 // 不传参数时保持本地默认值；显式非法参数必须报错，避免悄悄发布错误版本。
 val requestedVersionName = providers.gradleProperty("versionName").orElse("1.0").get()
@@ -75,6 +81,8 @@ android {
         versionName = requestedVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders["amapAndroidKey"] = amapAndroidKey
+        buildConfigField("String", "AMAP_ANDROID_KEY", "\"$amapAndroidKey\"")
     }
 
     buildTypes {
@@ -96,6 +104,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     testOptions {
         unitTests.isReturnDefaultValues = true
@@ -144,6 +153,8 @@ dependencies {
     implementation("androidx.room:room-ktx:2.8.4")
     ksp("androidx.room:room-compiler:2.8.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+    implementation("com.amap.api:location:11.3.000")
+    implementation("com.google.android.gms:play-services-location:21.2.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
