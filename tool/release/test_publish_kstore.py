@@ -3,6 +3,7 @@ import importlib.util
 import io
 import json
 import os
+import urllib.error
 import tempfile
 import unittest
 from pathlib import Path
@@ -16,6 +17,10 @@ spec.loader.exec_module(publisher)
 
 
 class PublishKstoreTest(unittest.TestCase):
+    def test_network_failures_are_specific_without_request_url(self):
+        error = urllib.error.URLError(TimeoutError("timed out"))
+        self.assertEqual(publisher.network_failure(error), "request timed out")
+
     def test_publish_replaces_assets_and_publishes_manifest_last(self):
         with tempfile.TemporaryDirectory() as temp:
             apk = Path(temp) / "release.apk"
@@ -48,15 +53,21 @@ class PublishKstoreTest(unittest.TestCase):
             self.assertEqual([call.args[0] for call in form_post.call_args_list], ["delete", "delete"])
 
     def test_upload_enables_direct_link(self):
-        response = MagicMock()
-        response.__enter__.return_value.read.return_value = json.dumps(
+        response = MagicMock(status=200)
+        response.read.return_value = json.dumps(
             {"code": 0, "data": {"id": 99, "downloadUrl": "https://download.example/a.apk"}},
         ).encode()
-        with patch.object(publisher.urllib.request, "urlopen", return_value=response), \
-             patch.object(publisher, "form_post") as form_post:
+        connection = MagicMock()
+        connection.getresponse.return_value = response
+        output = io.StringIO()
+        with patch.object(publisher.http.client, "HTTPSConnection", return_value=connection), \
+             patch.object(publisher, "form_post") as form_post, \
+             contextlib.redirect_stdout(output):
             result = publisher.upload("123-test-secret", 42, "app-release.apk", b"apk")
         self.assertEqual(result["id"], 99)
         form_post.assert_called_once_with("direct", "123-test-secret", {"fileId": "99", "isDirect": "1"})
+        self.assertIn("Upload progress app-release.apk: 3/3 bytes (100%)", output.getvalue())
+        self.assertNotIn("test-secret", output.getvalue())
 
     def test_missing_token_skips_publication(self):
         with patch.dict(os.environ, {"KSTORE_TOKEN": ""}, clear=False), \
