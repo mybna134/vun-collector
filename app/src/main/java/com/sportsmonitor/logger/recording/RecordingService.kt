@@ -31,7 +31,6 @@ import com.sportsmonitor.logger.data.LocationSampleEntity
 import com.sportsmonitor.logger.data.RecordingEntity
 import com.sportsmonitor.logger.data.SampleRules
 import com.sportsmonitor.logger.data.SensorSampleEntity
-import com.sportsmonitor.logger.location.AmapConsent
 import com.sportsmonitor.logger.location.AmapFix
 import com.sportsmonitor.logger.location.AmapLocationSource
 import com.sportsmonitor.logger.settings.SettingsStore
@@ -261,7 +260,6 @@ class RecordingService : Service(), SensorEventListener {
 
     private fun amapUnavailableReason(): String? = when {
         (SettingsStore.loadKey(this) ?: BuildConfig.AMAP_ANDROID_KEY).isBlank() -> "高德 Android SDK Key 未配置"
-        !AmapConsent.agreed(this) -> "尚未同意高德定位隐私说明"
         ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ->
             "精确定位未授权"
         else -> null

@@ -15,7 +15,9 @@ import uuid
 from pathlib import Path
 
 API = "https://api.kstore.space/api/v1/file"
+# KStore node list documents this as the default upload node.
 UPLOAD = "https://upload.kstore.space/upload"
+UPLOAD_TIMEOUT_SECONDS = 60 * 60
 
 
 def network_failure(exc: BaseException) -> str:
@@ -82,7 +84,7 @@ def upload(token: str, directory_id: int, filename: str, content: bytes) -> dict
     request_path = f"{endpoint.path}/{directory_id}?{urllib.parse.urlencode({'access_token': token})}"
     body_length = len(prefix) + len(content) + len(suffix)
     print(f"Uploading {filename} ({len(content)} bytes) to KStore")
-    connection = http.client.HTTPSConnection(endpoint.hostname, timeout=600)
+    connection = http.client.HTTPSConnection(endpoint.hostname, timeout=UPLOAD_TIMEOUT_SECONDS)
     try:
         connection.putrequest("POST", request_path)
         connection.putheader("Content-Type", f"multipart/form-data; boundary={boundary}")

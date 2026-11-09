@@ -50,23 +50,10 @@ internal object AmapFixRules {
             accuracyMeters.isFinite() && accuracyMeters >= 0.0
 }
 
-object AmapConsent {
-    private const val PREFS = "amap_location_privacy"
-    private const val AGREED = "agreed"
-    const val POLICY_URL = "https://lbs.amap.com/pages/privacy/"
-
-    fun agreed(context: Context): Boolean =
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(AGREED, false)
-
-    fun setAgreed(context: Context, value: Boolean): Boolean =
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(AGREED, value).commit()
-}
-
-/** Creates SDK clients only after key, permission and privacy checks have passed. */
+/** Creates SDK clients after key and permission checks have passed. */
 object AmapLocationSource {
     fun unavailableReason(context: Context): String? = when {
         availableKey(context).isBlank() -> "高德 Android SDK Key 未配置"
-        !AmapConsent.agreed(context) -> "尚未同意高德定位隐私说明"
         ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ->
             "精确定位未授权"
         else -> null
