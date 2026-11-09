@@ -4,7 +4,7 @@
 
 ## 先配置签名 Secrets
 
-复用已有 release keystore，避免更换签名导致无法覆盖安装。不要把密钥、Base64 或密码提交到 Git。Base64 是编码，不是加密。
+Release keystore 由 GitHub Actions Secrets 提供。2026-11-09 已生成并切换到新的 release key；新签名 APK 无法覆盖安装在旧签名下的版本。旧版用户需要卸载旧版后再安装新版，卸载会清除本地应用数据。后续发行必须保留当前四个签名 Secrets 不变，否则同样无法覆盖升级。不要把密钥、Base64 或密码提交到 Git。Base64 是编码，不是加密。
 
 1. 在自己的终端生成 Base64 文本，命令不输出到日志，按系统任选一条：
 
