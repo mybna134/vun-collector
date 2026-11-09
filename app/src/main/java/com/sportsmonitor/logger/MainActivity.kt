@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.content.Intent
 import android.net.Uri
+import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -44,6 +45,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalContext
@@ -69,6 +71,11 @@ import com.sportsmonitor.logger.settings.SettingsViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.sportsmonitor.logger.update.OtaUpdates
+import com.sportsmonitor.logger.update.UpdateManifest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,6 +102,9 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
     val pendingProbeExport by probe.exporting.collectAsState()
     var exportId by rememberSaveable { mutableStateOf<String?>(null) }
     val snackbar = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    var availableUpdate by remember { mutableStateOf<UpdateManifest?>(null) }
+    var updateDownloadInProgress by remember { mutableStateOf(false) }
     fun withAmapConsent(requireAmapKey: Boolean = true, action: () -> Unit) {
         // GeeToken 预定位用 GPS，不需要高德 SDK Key
         // 城市采集和运动记录需要高德 SDK
@@ -188,6 +198,14 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
     LaunchedEffect(historyDetailId) {
         historyDetailId?.let { if (vm.detail?.id != it) vm.openDetail(it) }
     }
+    LaunchedEffect(Unit) {
+        availableUpdate = withContext(Dispatchers.IO) {
+            runCatching {
+                val installedCode = context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode.toInt()
+                OtaUpdates.check(BuildConfig.KSTORE_UPDATE_URL, installedCode)
+            }.getOrNull()
+        }
+    }
     Scaffold(
         topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) },
         snackbarHost = { SnackbarHost(snackbar) },
@@ -228,6 +246,49 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
                     onList = { historyDetailId = null; historyVisible = true })
             }
         }
+    }
+    availableUpdate?.let { update ->
+        AlertDialog(
+            onDismissRequest = { if (!updateDownloadInProgress) availableUpdate = null },
+            title = { Text("更新") },
+            text = {
+                Column {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text("${update.versionCode}")
+                        Text(update.commitComment)
+                    }
+                    if (updateDownloadInProgress) Text("正在下载更新…")
+                }
+            },
+            confirmButton = {
+                Button(enabled = !updateDownloadInProgress, onClick = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !context.packageManager.canRequestPackageInstalls()) {
+                        val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                            data = Uri.parse("package:${context.packageName}")
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        context.startActivity(intent)
+                        return@Button
+                    }
+                    updateDownloadInProgress = true
+                    coroutineScope.launch {
+                        runCatching {
+                            withContext(Dispatchers.IO) { OtaUpdates.download(context, update.apkUrl) }
+                        }.onSuccess { apk ->
+                            availableUpdate = null
+                            runCatching { OtaUpdates.install(context, apk) }
+                                .onFailure { snackbar.showSnackbar(it.message ?: "无法启动安装程序") }
+                        }.onFailure { snackbar.showSnackbar(it.message ?: "下载更新失败") }
+                        updateDownloadInProgress = false
+                    }
+                }) { Text(if (updateDownloadInProgress) "下载中" else "确认") }
+            },
+            dismissButton = {
+                OutlinedButton(enabled = !updateDownloadInProgress, onClick = { availableUpdate = null }) {
+                    Text("取消")
+                }
+            },
+        )
     }
     if (historyVisible && selectedTab == 0) {
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)

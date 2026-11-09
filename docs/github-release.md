@@ -29,6 +29,9 @@
    | `KEYSTORE_PASSWORD` | keystore 密码 |
    | `KEY_ALIAS` | 已有签名 key 的 alias |
    | `KEY_PASSWORD` | 该 key 的密码 |
+| `KSTORE_TOKEN` | KStore access token；配置后发布会额外上传 OTA manifest 与 APK 到 `VunCollector/` |
+
+`KSTORE_TOKEN` 是可选项。未配置时保持 GitHub Release 发布流程；配置后 KStore API 任一步骤失败都会使该次发布失败。token 仅传给发布脚本进程和 KStore API，不应输出到日志。发布脚本会覆盖同名旧文件，先上传 `app-release.apk`，再写入 `update.json`，并为两者开启直链。
 
 3. 保存 Secrets 后删除本地临时 `keystore.base64.txt`，原 keystore 和密码继续安全备份。不要执行 `gh auth token` 或输出环境变量来排查。
 

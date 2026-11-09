@@ -43,6 +43,7 @@ jobs:
         id: version
         env:
           RELEASE_TAG: ${{ github.ref_name }}
+          KSTORE_TOKEN: ${{ secrets.KSTORE_TOKEN }}
         run: |
           python3 - <<'PY'
           import os, re
@@ -62,6 +63,11 @@ jobs:
               raise SystemExit('::error::minor/patch must be 0..99; versionCode must be 1..2100000000')
           with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
               output.write(f'name={tag[1:]}\ncode={code}\nprerelease={str(prerelease is not None).lower()}\n')
+              token = os.environ.get('KSTORE_TOKEN', '')
+              user_id = token.split('-', 1)[0] if token else ''
+              if user_id and not user_id.isdigit():
+                  raise SystemExit('::error::KSTORE_TOKEN must use the documented user-id-token format')
+              output.write(f'kstore_user_id={user_id}\n')
           print(f'Building versionName={tag[1:]}, versionCode={code}')
           PY
 
@@ -130,9 +136,11 @@ jobs:
           RELEASE_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           VERSION_NAME: ${{ steps.version.outputs.name }}
           VERSION_CODE: ${{ steps.version.outputs.code }}
+          KSTORE_USER_ID: ${{ steps.version.outputs.kstore_user_id }}
         run: |
           ./gradlew :app:assembleRelease \
             "-PversionName=$VERSION_NAME" "-PversionCode=$VERSION_CODE" \
+            "-PkstoreUserId=$KSTORE_USER_ID" \
             --no-configuration-cache --stacktrace --console=plain
 
       - name: Verify signature and version, rename APK
@@ -166,6 +174,15 @@ jobs:
           target="$RUNNER_TEMP/release/Vun-Collector-v${VERSION_NAME}.apk"
           cp -- "${apks[0]}" "$target"
           printf 'path=%s\n' "$target" >> "$GITHUB_OUTPUT"
+
+      - name: Publish Kstore OTA update
+        env:
+          KSTORE_TOKEN: ${{ secrets.KSTORE_TOKEN }}
+          APK_PATH: ${{ steps.apk.outputs.path }}
+          VERSION_NAME: ${{ steps.version.outputs.name }}
+          VERSION_CODE: ${{ steps.version.outputs.code }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: python3 tool/release/publish_kstore.py
 
       - name: Remove temporary signing keystore
         if: ${{ always() }}

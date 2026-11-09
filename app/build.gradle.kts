@@ -54,6 +54,10 @@ val requestedVersionCode = providers.gradleProperty("versionCode").orElse("1").g
     it.toIntOrNull()?.takeIf { code -> code in 1..2100000000 }
         ?: throw GradleException("versionCode must be an integer between 1 and 2100000000")
 }
+val kstoreUserId = providers.gradleProperty("kstoreUserId").orElse("").get().trim()
+require(kstoreUserId.isEmpty() || kstoreUserId.matches(Regex("[0-9]+"))) {
+    "kstoreUserId must be a numeric KStore user id"
+}
 
 plugins {
     id("com.android.application")
@@ -83,6 +87,11 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["amapAndroidKey"] = amapAndroidKey
         buildConfigField("String", "AMAP_ANDROID_KEY", "\"$amapAndroidKey\"")
+        buildConfigField(
+            "String",
+            "KSTORE_UPDATE_URL",
+            "\"${if (kstoreUserId.isEmpty()) "" else "https://download.kstore.space/api/v1/storage/download/$kstoreUserId/VunCollector/update.json"}\"",
+        )
     }
 
     buildTypes {
@@ -157,6 +166,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.2.0")
 
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20260814")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.test:core:1.6.1")
