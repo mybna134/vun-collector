@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -47,6 +48,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -104,6 +106,28 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
     val coroutineScope = rememberCoroutineScope()
     var availableUpdate by remember { mutableStateOf<UpdateManifest?>(null) }
     var updateDownloadInProgress by remember { mutableStateOf(false) }
+    var updateDownloadProgress by remember { mutableStateOf(0L to -1L) }
+    var updateDownloadError by remember { mutableStateOf<String?>(null) }
+    var updateCheckInProgress by remember { mutableStateOf(false) }
+    suspend fun checkForUpdates(manual: Boolean) {
+        if (updateCheckInProgress) return
+        updateCheckInProgress = true
+        try {
+            val update = withContext(Dispatchers.IO) {
+                val installedCode = context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode.toInt()
+                OtaUpdates.check(BuildConfig.UPDATE_MANIFEST_URL, installedCode)
+            }
+            availableUpdate = update
+            if (manual && update == null) snackbar.showSnackbar("已是最新版本")
+        } catch (cancelled: kotlinx.coroutines.CancellationException) {
+            throw cancelled
+        } catch (error: Exception) {
+            android.util.Log.w("OtaUpdates", "检查更新失败", error)
+            if (manual) snackbar.showSnackbar("检查更新失败：${error.message ?: "请检查网络后重试"}")
+        } finally {
+            updateCheckInProgress = false
+        }
+    }
     fun withAmapKey(action: () -> Unit) {
         if (AmapLocationSource.availableKey(context).isBlank()) {
             vm.showMessage("高德 Android SDK Key 未配置")
@@ -195,14 +219,7 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
     LaunchedEffect(historyDetailId) {
         historyDetailId?.let { if (vm.detail?.id != it) vm.openDetail(it) }
     }
-    LaunchedEffect(Unit) {
-        availableUpdate = withContext(Dispatchers.IO) {
-            runCatching {
-                val installedCode = context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode.toInt()
-                OtaUpdates.check(BuildConfig.KSTORE_UPDATE_URL, installedCode)
-            }.getOrNull()
-        }
-    }
+    LaunchedEffect(Unit) { checkForUpdates(manual = false) }
     Scaffold(
         topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) },
         snackbarHost = { SnackbarHost(snackbar) },
@@ -231,7 +248,9 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
                     pendingProbeExport != null,
                     { withAmapKey(action = fetchGeo) },
                     onExport = { exportProbe(ProbeTool.GEO) })
-                4 -> SettingsPage(settings)
+                4 -> SettingsPage(settings,
+                    checkingForUpdates = updateCheckInProgress,
+                    onCheckForUpdates = { coroutineScope.launch { checkForUpdates(manual = true) } })
                 else -> RecordingPage(live,
                     onStart = { withAmapKey {
                         val requested = mutableListOf(Manifest.permission.ACTIVITY_RECOGNITION,
@@ -254,35 +273,66 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
                         Text("${update.versionCode}")
                         Text(update.commitComment)
                     }
-                    if (updateDownloadInProgress) Text("正在下载更新…")
+                    if (updateDownloadInProgress) {
+                        val (downloaded, total) = updateDownloadProgress
+                        Text("正在下载更新…")
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            if (total > 0L) {
+                                val progress = (downloaded.toFloat() / total).coerceIn(0f, 1f)
+                                LinearProgressIndicator(progress = { progress }, modifier = Modifier.weight(1f))
+                                Text("${(progress * 100).toInt()}%")
+                            } else {
+                                LinearProgressIndicator(modifier = Modifier.weight(1f))
+                                Text("—%")
+                            }
+                        }
+                    }
+                    updateDownloadError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
                 }
             },
             confirmButton = {
-                Button(enabled = !updateDownloadInProgress, onClick = {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !context.packageManager.canRequestPackageInstalls()) {
-                        val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
-                            data = Uri.parse("package:${context.packageName}")
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Button(enabled = !updateDownloadInProgress, onClick = {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !context.packageManager.canRequestPackageInstalls()) {
+                            val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                                data = Uri.parse("package:${context.packageName}")
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(intent)
+                            return@Button
                         }
-                        context.startActivity(intent)
-                        return@Button
+                        updateDownloadInProgress = true
+                        updateDownloadProgress = 0L to -1L
+                        updateDownloadError = null
+                        coroutineScope.launch {
+                            try {
+                                val apk = withContext(Dispatchers.IO) {
+                                    OtaUpdates.download(context, update.apkUrl) { downloaded, total ->
+                                        updateDownloadProgress = downloaded to total
+                                    }
+                                }
+                                OtaUpdates.install(context, apk)
+                                availableUpdate = null
+                            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                                throw cancelled
+                            } catch (error: Exception) {
+                                android.util.Log.w("OtaUpdates", "下载或安装更新失败", error)
+                                updateDownloadError = error.message ?: "下载更新失败，请重试"
+                            } finally {
+                                updateDownloadInProgress = false
+                            }
+                        }
+                    }) { Text("更新") }
+                    OutlinedButton(enabled = !updateDownloadInProgress, onClick = { availableUpdate = null }) {
+                        Text("取消")
                     }
-                    updateDownloadInProgress = true
-                    coroutineScope.launch {
-                        runCatching {
-                            withContext(Dispatchers.IO) { OtaUpdates.download(context, update.apkUrl) }
-                        }.onSuccess { apk ->
-                            availableUpdate = null
-                            runCatching { OtaUpdates.install(context, apk) }
-                                .onFailure { snackbar.showSnackbar(it.message ?: "无法启动安装程序") }
-                        }.onFailure { snackbar.showSnackbar(it.message ?: "下载更新失败") }
-                        updateDownloadInProgress = false
-                    }
-                }) { Text(if (updateDownloadInProgress) "下载中" else "确认") }
-            },
-            dismissButton = {
-                OutlinedButton(enabled = !updateDownloadInProgress, onClick = { availableUpdate = null }) {
-                    Text("取消")
                 }
             },
         )

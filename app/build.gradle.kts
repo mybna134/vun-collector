@@ -54,10 +54,6 @@ val requestedVersionCode = providers.gradleProperty("versionCode").orElse("1").g
     it.toIntOrNull()?.takeIf { code -> code in 1..2100000000 }
         ?: throw GradleException("versionCode must be an integer between 1 and 2100000000")
 }
-val kstoreUserId = providers.gradleProperty("kstoreUserId").orElse("").get().trim()
-require(kstoreUserId.isEmpty() || kstoreUserId.matches(Regex("[0-9]+"))) {
-    "kstoreUserId must be a numeric KStore user id"
-}
 
 plugins {
     id("com.android.application")
@@ -89,8 +85,8 @@ android {
         buildConfigField("String", "AMAP_ANDROID_KEY", "\"$amapAndroidKey\"")
         buildConfigField(
             "String",
-            "KSTORE_UPDATE_URL",
-            "\"${if (kstoreUserId.isEmpty()) "" else "https://download.kstore.space/api/v1/storage/download/$kstoreUserId/VunCollector/update.json"}\"",
+            "UPDATE_MANIFEST_URL",
+            "\"https://oss.myb666.ccwu.cc/VunCollector/update.json\"",
         )
     }
 

@@ -1,6 +1,7 @@
 package com.sportsmonitor.logger.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -23,6 +24,8 @@ import androidx.compose.ui.unit.dp
 fun SettingsPage(
     vm: SettingsViewModel,
     modifier: Modifier = Modifier,
+    checkingForUpdates: Boolean = false,
+    onCheckForUpdates: () -> Unit,
 ) {
     val currentKey = vm.currentKey()
     var inputKey by remember { mutableStateOf("") }
@@ -57,6 +60,15 @@ fun SettingsPage(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("保存")
+        }
+        Row(Modifier.fillMaxWidth()) {
+            Button(
+                onClick = onCheckForUpdates,
+                enabled = !checkingForUpdates,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(if (checkingForUpdates) "正在检查更新…" else "检查更新")
+            }
         }
         if (message.isNotEmpty()) {
             Text(message)
