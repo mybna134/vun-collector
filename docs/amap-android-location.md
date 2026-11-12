@@ -2,8 +2,9 @@
 
 本应用的安装包名为 `com.collector.vun`。位置、城市、省和区由高德 Android 定位 SDK 提供；新位置结果保留 SDK 返回的 GCJ-02 坐标，不做坐标转换，也不调用 Android 定位 API 或高德 Web API 补值。旧运动记录来自 Android GPS，导出时标记为 WGS84。旧 Web 逆地理的 `radiusMeters` 字段已从新城市导出中移除。
 
-运动传感器、NMEA/GGA、DeviceInfo 和 SIM 运营商字段仍由 Android API 独立采集。GeeToken 的加密数据仍由 GeeToken SDK 生成；宿主只在调用前等待一次有效高德定位，不填充 GeeToken 内部字段。
-新位置的主海拔字段直接保存高德 SDK 返回值，界面不标高度基准；同一固定点的 NMEA/GGA 衍生字段可单独保存，不覆盖主海拔。
+运动传感器、NMEA/GGA、DeviceInfo 和 SIM 运营商字段仍由 Android API 独立采集。运动传感器仅采集加速度计（1）、累计计步（19）、单步事件（18）和陀螺仪（4），不采集方向传感器（3）；方向信息仅使用高德 SDK 的 `bearingDeg`，随 `gpsSamples` 导出。GeeToken 的加密数据仍由 GeeToken SDK 生成；宿主只在调用前等待一次有效高德定位，不填充 GeeToken 内部字段。
+新位置的主海拔字段使用高德 SDK 返回值，界面不标高度基准；速度（`speedMps`）、方向角（`bearingDeg`）、海拔（`altitudeMeters`）采集、保存及导出均保留 SDK 返回值的原始精度，不做小数位舍入。定位类型（`locationType`）保存并导出 SDK 返回的整数。数据库版本不兼容时直接清空旧数据并重建，不迁移历史记录。同一固定点的 NMEA/GGA 衍生字段可单独保存，不覆盖主海拔。
+每个 GPS 点新增整数 `count` 字段，直接记录该点 `AMapLocation.getSatellites()` 返回的卫星数，并随 `gpsSamples` 导出，包含返回值为 0 的情况。
 
 ## 配置 Android Key
 
@@ -17,6 +18,6 @@
 
 ## 验收
 
-有 Key 和可连接高德服务的设备后，分别检查 GCJ-02 实时定位、SDK 逆地理城市、权限拒绝、位置中断、锁屏连续记录、旧 WGS84 记录迁移和新 JSON 的 `source`/`coordsys`。联机仪器测试需显式传入 `-Pandroid.testInstrumentationRunnerArguments.amapLiveTest=true`；普通设备测试会跳过该项。SDK 返回非 GCJ-02 或预期字段缺失时，不自动转换或补值，先确认处理方案。
+有 Key 和可连接高德服务的设备后，分别检查 GCJ-02 实时定位、SDK 逆地理城市、权限拒绝、位置中断、锁屏连续记录、旧数据库清空重建和新 JSON 的 `source`/`coordsys`。联机仪器测试需显式传入 `-Pandroid.testInstrumentationRunnerArguments.amapLiveTest=true`；普通设备测试会跳过该项。SDK 返回非 GCJ-02 或预期字段缺失时，不自动转换或补值，先确认处理方案。
 
 2026-11-08 本机验证：无 Key 的构建、单元测试及 Pixel_8 模拟器设备测试通过；带 Key 的 APK 构建和隐私拒绝测试通过。显式启用联机 SDK 测试后，模拟器返回高德错误码 4（网络连接异常，`Location timeout#0402#pm100011`），未取得定位和城市字段。因此 GCJ-02 实时结果、逆地理及后台持续定位仍需在可连接高德服务的设备上验收。

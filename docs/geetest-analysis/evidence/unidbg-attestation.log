@@ -1,0 +1,721 @@
+[gee] loaded libgtcore.so base=0x12000000 size=0xfb000
+[gee] calling JNI_OnLoad … RegisterNatives output follows
+JNIEnv->FindClass(com/geetest/core/Core) was called from RX@0x12053ef8[libgtcore.so]0x53ef8
+JNIEnv->RegisterNatives(com/geetest/core/Core, RW@0x120f7108[libgtcore.so]0xf7108, 2) was called from RX@0x12053ec0[libgtcore.so]0x53ec0
+RegisterNative(com/geetest/core/Core, getData(Landroid/content/Context;Lcom/geetest/core/GeeGuardConfiguration;)Ljava/lang/String;, RX@0x12053c10[libgtcore.so]0x53c10)
+RegisterNative(com/geetest/core/Core, getData(Landroid/content/Context;)Ljava/lang/String;, RX@0x12053c84[libgtcore.so]0x53c84)
+[gee] JNI_OnLoad returned
+[gee] resolved class: com/geetest/core/Core
+Find native function Java_com_geetest_core_Core_getData => RX@0x12053c10[libgtcore.so]0x53c10
+JNIEnv->GetMethodID(com/geetest/core/GeeGuardConfiguration.isAlInfo()Z) => 0x87df6659 was called from RX@0x120529f8[libgtcore.so]0x529f8
+JNIEnv->CallBooleanMethodV(com.geetest.core.GeeGuardConfiguration@4a668b6e, isAlInfo() => false) was called from RX@0x120119dc[libgtcore.so]0x119dc
+JNIEnv->GetMethodID(com/geetest/core/GeeGuardConfiguration.isDevInfo()Z) => 0xeda1305d was called from RX@0x12052890[libgtcore.so]0x52890
+JNIEnv->CallBooleanMethodV(com.geetest.core.GeeGuardConfiguration@4a668b6e, isDevInfo() => false) was called from RX@0x120119dc[libgtcore.so]0x119dc
+JNIEnv->GetMethodID(com/geetest/core/GeeGuardConfiguration.getLevel()I) => 0x66541ddd was called from RX@0x12051bd0[libgtcore.so]0x51bd0
+JNIEnv->CallIntMethodV(com.geetest.core.GeeGuardConfiguration@4a668b6e, getLevel() => 0x1) was called from RX@0x1200c520[libgtcore.so]0xc520
+JNIEnv->GetMethodID(com/geetest/core/GeeGuardConfiguration.getAppId()Ljava/lang/String;) => 0x56c84f8e was called from RX@0x12051d3c[libgtcore.so]0x51d3c
+[gee-JNI] callObjectMethodV: com/geetest/core/GeeGuardConfiguration->getAppId()Ljava/lang/String;
+JNIEnv->CallObjectMethodV(com.geetest.core.GeeGuardConfiguration@4a668b6e, getAppId() => "mhs0n2abroy5ayzs5adtslzzsk1cya6h") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(com/geetest/core/GeeGuardConfiguration.getExtraInfo()Ljava/util/HashMap;) => 0x1c59b33 was called from RX@0x12052194[libgtcore.so]0x52194
+[gee-JNI] callObjectMethodV: com/geetest/core/GeeGuardConfiguration->getExtraInfo()Ljava/util/HashMap;
+JNIEnv->CallObjectMethodV(com.geetest.core.GeeGuardConfiguration@4a668b6e, getExtraInfo() => null) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(com/geetest/core/GeeGuardConfiguration.getOuterInfo()Ljava/util/HashMap;) => 0xc2e54d28 was called from RX@0x120527d4[libgtcore.so]0x527d4
+[gee-JNI] callObjectMethodV: com/geetest/core/GeeGuardConfiguration->getOuterInfo()Ljava/util/HashMap;
+JNIEnv->CallObjectMethodV(com.geetest.core.GeeGuardConfiguration@4a668b6e, getOuterInfo() => null) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(com/geetest/core/GeeGuardConfiguration.getContent()Ljava/lang/String;) => 0x71226ab was called from RX@0x12052758[libgtcore.so]0x52758
+[gee-JNI] callObjectMethodV: com/geetest/core/GeeGuardConfiguration->getContent()Ljava/lang/String;
+JNIEnv->CallObjectMethodV(com.geetest.core.GeeGuardConfiguration@4a668b6e, getContent() => null) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+Nov 10, 2026 12:09:42 AM com.github.unidbg.linux.ARM64SyscallHandler fork
+INFO: fork
+Nov 10, 2026 12:09:42 AM com.github.unidbg.linux.ARM64SyscallHandler fork
+INFO: fork
+[FIELD] helper=0xbab9c caller=0x4207c key=ir
+[FIELD] helper=0x13984 caller=0x42090 key=edp
+JNIEnv->FindClass(com/geetest/core/Utils) was called from RX@0x1202250c[libgtcore.so]0x2250c
+JNIEnv->GetStaticMethodID(com/geetest/core/Utils.c(Landroid/content/Context;)Ljava/lang/String;) => 0x3ef9a60 was called from RX@0x12022794[libgtcore.so]0x22794
+[gee-JNI] ★ Utils.c(Context) called — 返回 attestation blob
+JNIEnv->CallStaticObjectMethodV(class com/geetest/core/Utils, c(android.content.Context@4f67eb2a) => "0|1|1|VUN_CERT") was called from RX@0x1200cf60[libgtcore.so]0xcf60
+JNIEnv->GetStringUtfChars("0|1|1|VUN_CERT") was called from RX@0x12022cf0[libgtcore.so]0x22cf0
+[FIELD] helper=0x13c74 caller=0x22bec key=bl
+[FIELD] helper=0xbae7c caller=0x13ce4 key=bl
+[FIELD] helper=0x13c74 caller=0x22c00 key=vb
+[FIELD] helper=0xbae7c caller=0x13ce4 key=vb
+[FIELD] helper=0x13c74 caller=0x22c14 key=rct
+[FIELD] helper=0xbae7c caller=0x13ce4 key=rct
+[FIELD] helper=0x13c74 caller=0x22c28 key=csn
+[FIELD] helper=0xbae7c caller=0x13ce4 key=csn
+[FIELD] helper=0x13c74 caller=0x22c40 key=st
+[FIELD] helper=0xbae7c caller=0x13ce4 key=st
+[FIELD] helper=0x13984 caller=0x22c58 key=ka
+JNIEnv->ReleaseStringUTFChars("0|1|1|VUN_CERT") was called from RX@0x12022b58[libgtcore.so]0x22b58
+[FIELD] helper=0xbab9c caller=0x420c0 key=iam
+JNIEnv->GetMethodID(android/content/Context.getContentResolver()Landroid/content/ContentResolver;) => 0x3fe770ea was called from RX@0x1200de50[libgtcore.so]0xde50
+[gee-JNI] callObjectMethodV: android/content/Context->getContentResolver()Landroid/content/ContentResolver;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getContentResolver() => android.content.ContentResolver@625732) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->FindClass(android/provider/Settings$Global) was called from RX@0x1200f2a4[libgtcore.so]0xf2a4
+JNIEnv->GetStaticMethodID(android/provider/Settings$Global.getInt(Landroid/content/ContentResolver;Ljava/lang/String;I)I) => 0xf5d77519 was called from RX@0x1200e8f4[libgtcore.so]0xe8f4
+JNIEnv->NewStringUTF("adb_enabled") was called from RX@0x1200e9ac[libgtcore.so]0xe9ac
+[gee-JNI] Settings.getInt("adb_enabled") → 0
+JNIEnv->CallStaticIntMethodV(class android/provider/Settings$Global, getInt(android.content.ContentResolver@625732, "adb_enabled", 0x0) => 0x0) was called from RX@0x1200f578[libgtcore.so]0xf578
+[FIELD] helper=0xbab9c caller=0x420e0 key=iod
+JNIEnv->GetMethodID(android/content/Context.getApplicationInfo()Landroid/content/pm/ApplicationInfo;) => 0xbfeda400 was called from RX@0x1200f96c[libgtcore.so]0xf96c
+[gee-JNI] callObjectMethodV: android/content/Context->getApplicationInfo()Landroid/content/pm/ApplicationInfo;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getApplicationInfo() => android.content.pm.ApplicationInfo@66498326) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetFieldID(android/content/pm/ApplicationInfo.flags I) => 0xd8f8f0a3 was called from RX@0x120233f4[libgtcore.so]0x233f4
+JNIEnv->GetIntField(android.content.pm.ApplicationInfo@66498326, flags => 0x0) was called from RX@0x12023330[libgtcore.so]0x23330
+[FIELD] helper=0xbab9c caller=0x42100 key=idv
+JNIEnv->NewStringUTF("running") was called from RX@0x12044008[libgtcore.so]0x44008
+JNIEnv->GetStringUTFLength("running") was called from RX@0x12014020[libgtcore.so]0x14020
+JNIEnv->GetStringUtfChars("running") was called from RX@0x12013ec0[libgtcore.so]0x13ec0
+[FIELD] helper=0xbae7c caller=0x13e50 key=ads
+JNIEnv->ReleaseStringUTFChars("running") was called from RX@0x12013e68[libgtcore.so]0x13e68
+Nov 10, 2026 12:09:42 AM com.github.unidbg.linux.ARM64SyscallHandler fork
+INFO: fork
+[FIELD] helper=0xbab9c caller=0x42140 key=dtp
+JNIEnv->FindClass(android/os/Debug) was called from RX@0x12022d98[libgtcore.so]0x22d98
+JNIEnv->GetStaticMethodID(android/os/Debug.isDebuggerConnected()Z) => 0xd74c7fb4 was called from RX@0x12022e6c[libgtcore.so]0x22e6c
+[gee-JNI] static bool android/os/Debug->isDebuggerConnected()Z → false
+JNIEnv->CallStaticBooleanMethodV(class android/os/Debug, isDebuggerConnected() => false) was called from RX@0x12017ce8[libgtcore.so]0x17ce8
+[FIELD] helper=0xbab9c caller=0x4215c key=idc
+Nov 10, 2026 12:09:42 AM com.github.unidbg.linux.android.ArmLD64 dlopen
+INFO: dlopen failed: /apex/com.android.art/lib64/libjdwp.so
+Nov 10, 2026 12:09:42 AM com.github.unidbg.linux.android.ArmLD64 dlopen
+INFO: dlopen failed: /apex/com.android.runtime/lib64/libjdwp.so
+Nov 10, 2026 12:09:42 AM com.github.unidbg.linux.android.ArmLD64 dlopen
+INFO: dlopen failed: /system/lib64/libart.so
+[FIELD] helper=0xbab9c caller=0x42178 key=idc2
+JNIEnv->FindClass(java/lang/Class) was called from RX@0x120aec7c[libgtcore.so]0xaec7c
+JNIEnv->GetStaticMethodID(java/lang/Class.forName(Ljava/lang/String;)Ljava/lang/Class;) => 0x3eb95b6d was called from RX@0x120aed6c[libgtcore.so]0xaed6c
+JNIEnv->NewStringUTF("de.robv.android.xposed.XC_MethodHook") was called from RX@0x120aee30[libgtcore.so]0xaee30
+[gee-JNI] Class.forName("de.robv.android.xposed.XC_MethodHook") → stub
+JNIEnv->CallStaticObjectMethodV(class java/lang/Class, forName("de.robv.android.xposed.XC_MethodHook") => java.lang.Class@4e096385) was called from RX@0x1200cf60[libgtcore.so]0xcf60
+JNIEnv->NewStringUTF("de.robv.android.xposed.XposedHelpers") was called from RX@0x120aee80[libgtcore.so]0xaee80
+[gee-JNI] Class.forName("de.robv.android.xposed.XposedHelpers") → stub
+JNIEnv->CallStaticObjectMethodV(class java/lang/Class, forName("de.robv.android.xposed.XposedHelpers") => java.lang.Class@693fe6c9) was called from RX@0x1200cf60[libgtcore.so]0xcf60
+Nov 10, 2026 12:09:42 AM com.github.unidbg.linux.android.ArmLD64 dlopen
+INFO: dlopen failed: libsubstrate-dvm.so
+[FIELD] helper=0xbab9c caller=0x5468c key=xpd
+[FIELD] helper=0xbab9c caller=0x546a4 key=sub
+[FIELD] helper=0xbab9c caller=0x546c0 key=slp
+[FIELD] helper=0x13984 caller=0x546d4 key=smp
+[SH_INPUT] address=0x0 length=983040 sha256=866755af4769a90a992c85ce7680c011120a0021d7dc66a2d50b275d72b8a495
+[FIELD] helper=0x13c74 caller=0xafa3c key=sh
+[SH_VALUE] 120a0021d7dc66a2d50b275d72b8a495
+[FIELD] helper=0xbae7c caller=0x13ce4 key=sh
+[FIELD] helper=0x13984 caller=0xa6e28 key=nhdp
+[FIELD] helper=0x13984 caller=0xa6e3c key=fi
+[FIELD] helper=0x13984 caller=0xaebfc key=ghdp
+[FIELD] helper=0x13984 caller=0x421a4 key=rtp
+Nov 10, 2026 12:09:43 AM com.github.unidbg.linux.ARM64SyscallHandler fork
+INFO: fork
+Nov 10, 2026 12:09:43 AM com.github.unidbg.linux.ARM64SyscallHandler fork
+INFO: fork
+[FIELD] helper=0x13984 caller=0x421c4 key=rrt
+Nov 10, 2026 12:09:43 AM com.github.unidbg.linux.ARM64SyscallHandler fork
+INFO: fork
+[FIELD] helper=0x13984 caller=0x421e4 key=rrs
+Nov 10, 2026 12:09:43 AM com.github.unidbg.linux.ARM64SyscallHandler fork
+INFO: fork
+[FIELD] helper=0x13984 caller=0x42204 key=rmp
+Nov 10, 2026 12:09:43 AM com.github.unidbg.linux.ARM64SyscallHandler fork
+INFO: fork
+[FIELD] helper=0x13984 caller=0x42224 key=pm
+[FIELD] helper=0x13984 caller=0x42244 key=sp
+Nov 10, 2026 12:09:43 AM com.github.unidbg.linux.ARM64SyscallHandler fork
+INFO: fork
+Nov 10, 2026 12:09:43 AM com.github.unidbg.linux.ARM64SyscallHandler fork
+INFO: fork
+Nov 10, 2026 12:09:43 AM com.github.unidbg.linux.ARM64SyscallHandler fork
+INFO: fork
+[FIELD] helper=0x13984 caller=0x42264 key=ro
+[FIELD] helper=0x13984 caller=0x42284 key=sfp
+[FIELD] helper=0xbab9c caller=0x4229c key=iss
+JNIEnv->FindClass(java/lang/System) was called from RX@0x1201118c[libgtcore.so]0x1118c
+JNIEnv->GetStaticMethodID(java/lang/System.getProperty(Ljava/lang/String;)Ljava/lang/String;) => 0x3e16b3f8 was called from RX@0x1201124c[libgtcore.so]0x1124c
+JNIEnv->NewStringUTF("http.proxyHost") was called from RX@0x120113ec[libgtcore.so]0x113ec
+[gee-JNI] ★ System.getProperty("http.proxyHost") → null (py探针路径!)
+JNIEnv->CallStaticObjectMethodV(class java/lang/System, getProperty("http.proxyHost") => "") was called from RX@0x1200cf60[libgtcore.so]0xcf60
+JNIEnv->FindClass(java/lang/System) was called from RX@0x1201118c[libgtcore.so]0x1118c
+JNIEnv->GetStaticMethodID(java/lang/System.getProperty(Ljava/lang/String;)Ljava/lang/String;) => 0x3e16b3f8 was called from RX@0x1201124c[libgtcore.so]0x1124c
+JNIEnv->NewStringUTF("http.proxyPort") was called from RX@0x120113ec[libgtcore.so]0x113ec
+[gee-JNI] ★ System.getProperty("http.proxyPort") → null (py探针路径!)
+JNIEnv->CallStaticObjectMethodV(class java/lang/System, getProperty("http.proxyPort") => "") was called from RX@0x1200cf60[libgtcore.so]0xcf60
+JNIEnv->GetStringUTFLength("") was called from RX@0x120168fc[libgtcore.so]0x168fc
+JNIEnv->GetStringUTFLength("") was called from RX@0x120168fc[libgtcore.so]0x168fc
+[FIELD] helper=0x13984 caller=0x422a8 key=py
+JNIEnv->GetMethodID(android/content/Context.getSystemService(Ljava/lang/String;)Ljava/lang/Object;) => 0x545bcf2d was called from RX@0x1201748c[libgtcore.so]0x1748c
+JNIEnv->NewStringUTF("connectivity") was called from RX@0x1201764c[libgtcore.so]0x1764c
+[gee-JNI] callObjectMethodV: android/content/Context->getSystemService(Ljava/lang/String;)Ljava/lang/Object;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getSystemService("connectivity") => android.net.ConnectivityManager@48974e45) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/net/ConnectivityManager.getNetworkInfo(I)Landroid/net/NetworkInfo;) => 0x98e93bd0 was called from RX@0x12047ed0[libgtcore.so]0x47ed0
+[gee-JNI] callObjectMethodV: android/net/ConnectivityManager->getNetworkInfo(I)Landroid/net/NetworkInfo;
+[gee-JNI] getNetworkInfo → NetworkInfo stub (onv 键活证)
+JNIEnv->CallObjectMethodV(android.net.ConnectivityManager@48974e45, getNetworkInfo(0x11) => android.net.NetworkInfo@6a84a97d) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/net/NetworkInfo.isConnected()Z) => 0x686684d5 was called from RX@0x12047dd0[libgtcore.so]0x47dd0
+[gee-JNI] ★ callBooleanMethodV android/net/NetworkInfo->isConnected()Z → true
+JNIEnv->CallBooleanMethodV(android.net.NetworkInfo@6a84a97d, isConnected() => true) was called from RX@0x120119dc[libgtcore.so]0x119dc
+[FIELD] helper=0xbab9c caller=0x422c8 key=onv
+JNIEnv->GetMethodID(android/content/Context.getSystemService(Ljava/lang/String;)Ljava/lang/Object;) => 0x545bcf2d was called from RX@0x1201748c[libgtcore.so]0x1748c
+JNIEnv->NewStringUTF("accessibility") was called from RX@0x1201764c[libgtcore.so]0x1764c
+[gee-JNI] callObjectMethodV: android/content/Context->getSystemService(Ljava/lang/String;)Ljava/lang/Object;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getSystemService("accessibility") => android.view.accessibility.AccessibilityManager@50ad3bc1) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/view/accessibility/AccessibilityManager.getEnabledAccessibilityServiceList(I)Ljava/util/List;) => 0x7d8f2a4e was called from RX@0x12027f20[libgtcore.so]0x27f20
+[gee-JNI] callObjectMethodV: android/view/accessibility/AccessibilityManager->getEnabledAccessibilityServiceList(I)Ljava/util/List;
+[gee-JNI] ★ listing android/view/accessibility/AccessibilityManager->getEnabledAccessibilityServiceList(I)Ljava/util/List; → empty ArrayList
+JNIEnv->CallObjectMethodV(android.view.accessibility.AccessibilityManager@50ad3bc1, getEnabledAccessibilityServiceList(0xffffffff) => java.util.ArrayList@223aa2f7) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(java/util/ArrayList.iterator()Ljava/util/Iterator;) => 0x257c79f8 was called from RX@0x120278e4[libgtcore.so]0x278e4
+[gee-JNI] callObjectMethodV: java/util/ArrayList->iterator()Ljava/util/Iterator;
+JNIEnv->CallObjectMethodV(java.util.ArrayList@223aa2f7, iterator() => java.util.Iterator@6d3a388c) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(java/util/Iterator.hasNext()Z) => 0x74f5adeb was called from RX@0x1202741c[libgtcore.so]0x2741c
+JNIEnv->GetMethodID(java/util/Iterator.next()Ljava/lang/Object;) => 0xc9be0fcf was called from RX@0x12027b58[libgtcore.so]0x27b58
+[gee-JNI] callBooleanMethodV java/util/Iterator->hasNext()Z → false
+JNIEnv->CallBooleanMethodV(java.util.Iterator@6d3a388c, hasNext() => false) was called from RX@0x120119dc[libgtcore.so]0x119dc
+[FIELD] helper=0x13984 caller=0x422f4 key=gas
+JNIEnv->FindClass(android/content/Intent) was called from RX@0x12023488[libgtcore.so]0x23488
+JNIEnv->GetMethodID(android/content/Intent.<init>(Ljava/lang/String;)V) => 0xc14c8f0a was called from RX@0x12024384[libgtcore.so]0x24384
+JNIEnv->NewStringUTF("android.intent.action.MAIN") was called from RX@0x12024290[libgtcore.so]0x24290
+[gee-JNI] newObjectV android/content/Intent-><init>(Ljava/lang/String;)V → stub
+JNIEnv->NewObjectV(class android/content/Intent, <init>("android.intent.action.MAIN") => android.content.Intent@20f5239f) was called from RX@0x1200b834[libgtcore.so]0xb834
+JNIEnv->GetMethodID(android/content/Intent.addCategory(Ljava/lang/String;)Landroid/content/Intent;) => 0xffb4b930 was called from RX@0x120246a0[libgtcore.so]0x246a0
+JNIEnv->NewStringUTF("android.intent.category.HOME") was called from RX@0x120237ac[libgtcore.so]0x237ac
+[gee-JNI] callObjectMethodV: android/content/Intent->addCategory(Ljava/lang/String;)Landroid/content/Intent;
+JNIEnv->CallObjectMethodV(android.content.Intent@20f5239f, addCategory("android.intent.category.HOME") => android.content.Intent@20f5239f) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/Context.getPackageManager()Landroid/content/pm/PackageManager;) => 0x3acc78f0 was called from RX@0x1200fcf8[libgtcore.so]0xfcf8
+[gee-JNI] callObjectMethodV: android/content/Context->getPackageManager()Landroid/content/pm/PackageManager;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getPackageManager() => android.content.pm.PackageManager@6bedbc4d) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/pm/PackageManager.resolveActivity(Landroid/content/Intent;I)Landroid/content/pm/ResolveInfo;) => 0x455577cf was called from RX@0x12024628[libgtcore.so]0x24628
+[gee-JNI] callObjectMethodV: android/content/pm/PackageManager->resolveActivity(Landroid/content/Intent;I)Landroid/content/pm/ResolveInfo;
+[gee-JNI] ★ launcher query → empty list
+JNIEnv->CallObjectMethodV(android.content.pm.PackageManager@6bedbc4d, resolveActivity(android.content.Intent@20f5239f, 0x0) => java.util.ArrayList@932bc4a) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetFieldID(java/util/ArrayList.activityInfo Landroid/content/pm/ActivityInfo;) => 0x4e6877d9 was called from RX@0x120243cc[libgtcore.so]0x243cc
+[gee-JNI] getObjectField java/util/ArrayList->activityInfo:Landroid/content/pm/ActivityInfo; → empty string
+JNIEnv->GetObjectField(java.util.ArrayList@932bc4a, activityInfo Landroid/content/pm/ActivityInfo; => "") was called from RX@0x120238c0[libgtcore.so]0x238c0
+JNIEnv->GetFieldID(java/lang/String.packageName Ljava/lang/String;) => 0x1a526e29 was called from RX@0x120246f4[libgtcore.so]0x246f4
+[gee-JNI] getObjectField java/lang/String->packageName:Ljava/lang/String; → empty string
+JNIEnv->GetObjectField("", packageName Ljava/lang/String; => "") was called from RX@0x12023ee0[libgtcore.so]0x23ee0
+JNIEnv->GetMethodID(android/content/Context.getPackageManager()Landroid/content/pm/PackageManager;) => 0x3acc78f0 was called from RX@0x1200fcf8[libgtcore.so]0xfcf8
+[gee-JNI] callObjectMethodV: android/content/Context->getPackageManager()Landroid/content/pm/PackageManager;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getPackageManager() => android.content.pm.PackageManager@29d89d5d) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/pm/PackageManager.getPackageInfo(Ljava/lang/String;I)Landroid/content/pm/PackageInfo;) => 0x3bca8377 was called from RX@0x12018e90[libgtcore.so]0x18e90
+[gee-JNI] callObjectMethodV: android/content/pm/PackageManager->getPackageInfo(Ljava/lang/String;I)Landroid/content/pm/PackageInfo;
+JNIEnv->CallObjectMethodV(android.content.pm.PackageManager@29d89d5d, getPackageInfo("", 0x0) => android.content.pm.PackageInfo@3514a4c0) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetFieldID(android/content/pm/PackageInfo.versionName Ljava/lang/String;) => 0xbcc0232a was called from RX@0x1202484c[libgtcore.so]0x2484c
+[gee-JNI] getObjectField android/content/pm/PackageInfo->versionName:Ljava/lang/String; → empty string
+JNIEnv->GetObjectField(android.content.pm.PackageInfo@3514a4c0, versionName Ljava/lang/String; => "") was called from RX@0x12024b3c[libgtcore.so]0x24b3c
+JNIEnv->GetFieldID(android/content/pm/PackageInfo.firstInstallTime J) => 0x215b0bd1 was called from RX@0x12024c74[libgtcore.so]0x24c74
+[gee-JNI] getLongField android/content/pm/PackageInfo->firstInstallTime:J → 0L
+JNIEnv->GetLongField(android.content.pm.PackageInfo@3514a4c0, firstInstallTime => 0x0) was called from RX@0x12024aac[libgtcore.so]0x24aac
+[FIELD] helper=0x13c74 caller=0x24920 key=lauf
+[FIELD] helper=0xbae7c caller=0x13ce4 key=lauf
+JNIEnv->GetStringUTFLength("") was called from RX@0x12014020[libgtcore.so]0x14020
+[FIELD] helper=0xbae7c caller=0x13f20 key=lauv
+JNIEnv->GetFieldID(android/content/pm/PackageInfo.applicationInfo Landroid/content/pm/ApplicationInfo;) => 0xb287dbb2 was called from RX@0x12025228[libgtcore.so]0x25228
+[gee-JNI] getObjectField android/content/pm/PackageInfo->applicationInfo:Landroid/content/pm/ApplicationInfo; → empty string
+JNIEnv->GetObjectField(android.content.pm.PackageInfo@3514a4c0, applicationInfo Landroid/content/pm/ApplicationInfo; => "") was called from RX@0x12025268[libgtcore.so]0x25268
+JNIEnv->GetMethodID(java/lang/String.loadLabel(Landroid/content/pm/PackageManager;)Ljava/lang/CharSequence;) => 0x948b65d9 was called from RX@0x1202501c[libgtcore.so]0x2501c
+JNIEnv->GetMethodID(android/content/Context.getPackageManager()Landroid/content/pm/PackageManager;) => 0x3acc78f0 was called from RX@0x1200fcf8[libgtcore.so]0xfcf8
+[gee-JNI] callObjectMethodV: android/content/Context->getPackageManager()Landroid/content/pm/PackageManager;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getPackageManager() => android.content.pm.PackageManager@15aab8c6) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+[gee-JNI] callObjectMethodV: java/lang/String->loadLabel(Landroid/content/pm/PackageManager;)Ljava/lang/CharSequence;
+JNIEnv->CallObjectMethodV("", loadLabel(android.content.pm.PackageManager@15aab8c6) => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(java/lang/String.toString()Ljava/lang/String;) => 0x8da338ad was called from RX@0x12019480[libgtcore.so]0x19480
+[gee-JNI] callObjectMethodV: java/lang/String->toString()Ljava/lang/String;
+JNIEnv->CallObjectMethodV("", toString() => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetStringUTFLength("") was called from RX@0x12014020[libgtcore.so]0x14020
+[FIELD] helper=0xbae7c caller=0x13f20 key=laun
+JNIEnv->GetStringUTFLength("") was called from RX@0x12014020[libgtcore.so]0x14020
+[FIELD] helper=0xbae7c caller=0x13f20 key=lau
+JNIEnv->GetMethodID(android/content/Context.getFilesDir()Ljava/io/File;) => 0x26aff3ba was called from RX@0x1201ee94[libgtcore.so]0x1ee94
+[gee-JNI] callObjectMethodV: android/content/Context->getFilesDir()Ljava/io/File;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getFilesDir() => java.io.File@4de4b452) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(java/io/File.getAbsolutePath()Ljava/lang/String;) => 0xb4553f34 was called from RX@0x1201efb4[libgtcore.so]0x1efb4
+[gee-JNI] callObjectMethodV: java/io/File->getAbsolutePath()Ljava/lang/String;
+JNIEnv->CallObjectMethodV(java.io.File@4de4b452, getAbsolutePath() => "/data/user/0/com.collector.vun/files") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetStringUTFLength("/data/user/0/com.collector.vun/files") was called from RX@0x12014020[libgtcore.so]0x14020
+JNIEnv->GetStringUtfChars("/data/user/0/com.collector.vun/files") was called from RX@0x12013ec0[libgtcore.so]0x13ec0
+[FIELD] helper=0xbae7c caller=0x13e50 key=pat
+JNIEnv->ReleaseStringUTFChars("/data/user/0/com.collector.vun/files") was called from RX@0x12013e68[libgtcore.so]0x13e68
+Nov 10, 2026 12:09:43 AM com.github.unidbg.linux.android.ArmLD64 dlopen
+INFO: dlopen failed: /system/lib64/libandroid.so
+[FIELD] helper=0x13984 caller=0x42374 key=sen
+JNIEnv->GetMethodID(android/content/Context.getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;) => 0xa0a12d1f was called from RX@0x12014fe4[libgtcore.so]0x14fe4
+JNIEnv->NewStringUTF("gt_core") was called from RX@0x12015030[libgtcore.so]0x15030
+[gee-JNI] callObjectMethodV: android/content/Context->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getSharedPreferences("gt_core", 0x0) => android.content.SharedPreferences@6babf3bf) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences.getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) => 0x2c5b4190 was called from RX@0x12015298[libgtcore.so]0x15298
+JNIEnv->NewStringUTF("sou") was called from RX@0x120151e4[libgtcore.so]0x151e4
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+[gee-JNI] prefs.getString(android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) → �∝nJNIEnv->CallObjectMethodV(android.content.SharedPreferences@6babf3bf, getString("sou", null) => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetStringUTFLength("") was called from RX@0x1201f5f0[libgtcore.so]0x1f5f0
+[FIELD] helper=0x13c74 caller=0x1f638 key=sou
+[FIELD] helper=0xbae7c caller=0x13ce4 key=sou
+JNIEnv->GetMethodID(android/content/Context.getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;) => 0xa0a12d1f was called from RX@0x12014fe4[libgtcore.so]0x14fe4
+JNIEnv->NewStringUTF("gt_core") was called from RX@0x12015030[libgtcore.so]0x15030
+[gee-JNI] callObjectMethodV: android/content/Context->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getSharedPreferences("gt_core", 0x0) => android.content.SharedPreferences@10feca44) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences.getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) => 0x2c5b4190 was called from RX@0x12015298[libgtcore.so]0x15298
+JNIEnv->NewStringUTF("suv") was called from RX@0x120151e4[libgtcore.so]0x151e4
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+[gee-JNI] prefs.getString(android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) → �∝nJNIEnv->CallObjectMethodV(android.content.SharedPreferences@10feca44, getString("suv", null) => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetStringUTFLength("") was called from RX@0x1201e37c[libgtcore.so]0x1e37c
+Nov 10, 2026 12:09:43 AM com.github.unidbg.linux.ARM64SyscallHandler fork
+INFO: fork
+[FIELD] helper=0x13c74 caller=0x1e488 key=suv
+[FIELD] helper=0xbae7c caller=0x13ce4 key=suv
+JNIEnv->GetMethodID(android/content/Context.getSystemService(Ljava/lang/String;)Ljava/lang/Object;) => 0x545bcf2d was called from RX@0x1201748c[libgtcore.so]0x1748c
+JNIEnv->NewStringUTF("phone") was called from RX@0x1201764c[libgtcore.so]0x1764c
+[gee-JNI] callObjectMethodV: android/content/Context->getSystemService(Ljava/lang/String;)Ljava/lang/Object;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getSystemService("phone") => android.telephony.TelephonyManager@2b48a640) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/telephony/TelephonyManager.getMmsUserAgent()Ljava/lang/String;) => 0x2b128f0b was called from RX@0x120285e8[libgtcore.so]0x285e8
+[gee-JNI] callObjectMethodV: android/telephony/TelephonyManager->getMmsUserAgent()Ljava/lang/String;
+JNIEnv->CallObjectMethodV(android.telephony.TelephonyManager@2b48a640, getMmsUserAgent() => "VUN_MMS_SENTINEL") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetStringUTFLength("VUN_MMS_SENTINEL") was called from RX@0x12014020[libgtcore.so]0x14020
+JNIEnv->GetStringUtfChars("VUN_MMS_SENTINEL") was called from RX@0x12013ec0[libgtcore.so]0x13ec0
+[FIELD] helper=0xbae7c caller=0x13e50 key=mua
+JNIEnv->ReleaseStringUTFChars("VUN_MMS_SENTINEL") was called from RX@0x12013e68[libgtcore.so]0x13e68
+[FIELD] helper=0x13c74 caller=0x1db5c key=man
+[FIELD] helper=0xbae7c caller=0x13ce4 key=man
+JNIEnv->FindClass(android/os/Build) was called from RX@0x12010d38[libgtcore.so]0x10d38
+JNIEnv->GetStaticFieldID(android/os/Build.BRANDLjava/lang/String;) => 0x7f1ab8f1 was called from RX@0x12011070[libgtcore.so]0x11070
+[gee-JNI] getStaticObjectField android/os/Build->BRAND:Ljava/lang/String;
+[gee-JNI] ★ Build.BRAND → Xiaomi
+JNIEnv->GetStaticObjectField(class android/os/Build, BRAND Ljava/lang/String; => "Xiaomi") was called from RX@0x120110a8[libgtcore.so]0x110a8
+JNIEnv->GetStringUTFLength("Xiaomi") was called from RX@0x12014020[libgtcore.so]0x14020
+JNIEnv->GetStringUtfChars("Xiaomi") was called from RX@0x12013ec0[libgtcore.so]0x13ec0
+[FIELD] helper=0xbae7c caller=0x13e50 key=pla
+JNIEnv->ReleaseStringUTFChars("Xiaomi") was called from RX@0x12013e68[libgtcore.so]0x13e68
+JNIEnv->FindClass(android/os/Build) was called from RX@0x12010d38[libgtcore.so]0x10d38
+JNIEnv->GetStaticFieldID(android/os/Build.MODELLjava/lang/String;) => 0xd3d6520f was called from RX@0x12011070[libgtcore.so]0x11070
+[gee-JNI] getStaticObjectField android/os/Build->MODEL:Ljava/lang/String;
+[gee-JNI] ★ Build.MODEL → Mi 10
+JNIEnv->GetStaticObjectField(class android/os/Build, MODEL Ljava/lang/String; => "Mi 10") was called from RX@0x120110a8[libgtcore.so]0x110a8
+JNIEnv->GetStringUTFLength("Mi 10") was called from RX@0x12014020[libgtcore.so]0x14020
+JNIEnv->GetStringUtfChars("Mi 10") was called from RX@0x12013ec0[libgtcore.so]0x13ec0
+[FIELD] helper=0xbae7c caller=0x13e50 key=mod
+JNIEnv->ReleaseStringUTFChars("Mi 10") was called from RX@0x12013e68[libgtcore.so]0x13e68
+JNIEnv->FindClass(android/os/Build$VERSION) was called from RX@0x12010d38[libgtcore.so]0x10d38
+JNIEnv->GetStaticFieldID(android/os/Build$VERSION.RELEASELjava/lang/String;) => 0x34b13a85 was called from RX@0x12011070[libgtcore.so]0x11070
+[gee-JNI] getStaticObjectField android/os/Build$VERSION->RELEASE:Ljava/lang/String;
+JNIEnv->GetStaticObjectField(class android/os/Build$VERSION, RELEASE Ljava/lang/String; => "13") was called from RX@0x120110a8[libgtcore.so]0x110a8
+JNIEnv->GetStringUTFLength("13") was called from RX@0x12014020[libgtcore.so]0x14020
+JNIEnv->GetStringUtfChars("13") was called from RX@0x12013ec0[libgtcore.so]0x13ec0
+[FIELD] helper=0xbae7c caller=0x13e50 key=osv
+JNIEnv->ReleaseStringUTFChars("13") was called from RX@0x12013e68[libgtcore.so]0x13e68
+[FIELD] helper=0x13c74 caller=0x1dc2c key=api
+[FIELD] helper=0xbae7c caller=0x13ce4 key=api
+[FIELD] helper=0x13c74 caller=0x1dc74 key=pro
+[FIELD] helper=0xbae7c caller=0x13ce4 key=pro
+[FIELD] helper=0x13c74 caller=0x1dcbc key=abl
+[FIELD] helper=0xbae7c caller=0x13ce4 key=abl
+[FIELD] helper=0x13c74 caller=0x1dcd4 key=cai
+[FIELD] helper=0xbae7c caller=0x13ce4 key=cai
+[FIELD] helper=0x13c74 caller=0x1dd1c key=soc
+[FIELD] helper=0xbae7c caller=0x13ce4 key=soc
+[FIELD] helper=0x13c74 caller=0x1dd64 key=fp
+[FIELD] helper=0xbae7c caller=0x13ce4 key=fp
+[FIELD] helper=0x13c74 caller=0x1ddd8 key=cn
+[FIELD] helper=0xbae7c caller=0x13ce4 key=cn
+[FIELD] helper=0x13984 caller=0x4242c key=brl
+JNIEnv->GetMethodID(android/content/Context.getContentResolver()Landroid/content/ContentResolver;) => 0x3fe770ea was called from RX@0x1200de50[libgtcore.so]0xde50
+[gee-JNI] callObjectMethodV: android/content/Context->getContentResolver()Landroid/content/ContentResolver;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getContentResolver() => android.content.ContentResolver@4bb33f74) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->FindClass(android/provider/Settings$System) was called from RX@0x1200effc[libgtcore.so]0xeffc
+JNIEnv->GetStaticMethodID(android/provider/Settings$System.getInt(Landroid/content/ContentResolver;Ljava/lang/String;I)I) => 0xd2fc650d was called from RX@0x1200e8f4[libgtcore.so]0xe8f4
+JNIEnv->NewStringUTF("screen_brightness") was called from RX@0x1200e9ac[libgtcore.so]0xe9ac
+[gee-JNI] Settings.getInt("screen_brightness") → 0
+JNIEnv->CallStaticIntMethodV(class android/provider/Settings$System, getInt(android.content.ContentResolver@4bb33f74, "screen_brightness", 0x0) => 0x0) was called from RX@0x1200f578[libgtcore.so]0xf578
+[FIELD] helper=0xbab9c caller=0x42460 key=sb
+[FIELD] helper=0x13c74 caller=0x28c34 key=gss
+[FIELD] helper=0xbae7c caller=0x13ce4 key=gss
+[FIELD] helper=0x13c74 caller=0x28c58 key=gvb
+[FIELD] helper=0xbae7c caller=0x13ce4 key=gvb
+[FIELD] helper=0x13c74 caller=0x28c7c key=gvri
+[FIELD] helper=0xbae7c caller=0x13ce4 key=gvri
+[FIELD] helper=0x13c74 caller=0x28ca0 key=nh
+[FIELD] helper=0xbae7c caller=0x13ce4 key=nh
+[FIELD] helper=0x13c74 caller=0x28cc4 key=rbdu
+[FIELD] helper=0xbae7c caller=0x13ce4 key=rbdu
+[FIELD] helper=0x13c74 caller=0x28ce8 key=rbd
+[FIELD] helper=0xbae7c caller=0x13ce4 key=rbd
+[FIELD] helper=0x13c74 caller=0x28d0c key=rbdi
+[FIELD] helper=0xbae7c caller=0x13ce4 key=rbdi
+[FIELD] helper=0x13c74 caller=0x28d30 key=rbh
+[FIELD] helper=0xbae7c caller=0x13ce4 key=rbh
+[FIELD] helper=0x13c74 caller=0x28d54 key=rbi
+[FIELD] helper=0xbae7c caller=0x13ce4 key=rbi
+[FIELD] helper=0x13c74 caller=0x28d78 key=rpb
+[FIELD] helper=0xbae7c caller=0x13ce4 key=rpb
+[FIELD] helper=0x13c74 caller=0x28d9c key=gnt
+[FIELD] helper=0xbae7c caller=0x13ce4 key=gnt
+[FIELD] helper=0x13c74 caller=0x28dc0 key=rcgc
+[FIELD] helper=0xbae7c caller=0x13ce4 key=rcgc
+[FIELD] helper=0x13c74 caller=0x28de4 key=gon
+[FIELD] helper=0xbae7c caller=0x13ce4 key=gon
+[FIELD] helper=0x13c74 caller=0x28e08 key=rh
+[FIELD] helper=0xbae7c caller=0x13ce4 key=rh
+[FIELD] helper=0x13c74 caller=0x28e2c key=rmvr
+[FIELD] helper=0xbae7c caller=0x13ce4 key=rmvr
+[FIELD] helper=0x13c74 caller=0x28e50 key=rhbd
+[FIELD] helper=0xbae7c caller=0x13ce4 key=rhbd
+[FIELD] helper=0x13c74 caller=0x28e74 key=rchvh
+[FIELD] helper=0xbae7c caller=0x13ce4 key=rchvh
+[FIELD] helper=0xbab9c caller=0x2aa28 key=nnp
+JNIEnv->FindClass(java/lang/System) was called from RX@0x1200d190[libgtcore.so]0xd190
+JNIEnv->GetStaticMethodID(java/lang/System.currentTimeMillis()J) => 0x182fb631 was called from RX@0x1200d464[libgtcore.so]0xd464
+[gee-JNI] ★ currentTimeMillis → 1794240583156 (ts 键实锚!)
+JNIEnv->CallStaticLongMethodV(class java/lang/System, currentTimeMillis() => 0x1a1c11295f4L) was called from RX@0x12014cf8[libgtcore.so]0x14cf8
+Nov 10, 2026 12:09:43 AM com.github.unidbg.linux.ARM64SyscallHandler fork
+INFO: fork
+[FIELD] helper=0x13c74 caller=0x1e1fc key=bid
+[FIELD] helper=0xbae7c caller=0x13ce4 key=bid
+JNIEnv->GetMethodID(android/content/Context.getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;) => 0xa0a12d1f was called from RX@0x12014fe4[libgtcore.so]0x14fe4
+JNIEnv->NewStringUTF("gt_core") was called from RX@0x12015030[libgtcore.so]0x15030
+[gee-JNI] callObjectMethodV: android/content/Context->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getSharedPreferences("gt_core", 0x0) => android.content.SharedPreferences@3d5c822d) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences.getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) => 0x2c5b4190 was called from RX@0x12015298[libgtcore.so]0x15298
+JNIEnv->NewStringUTF("sdi") was called from RX@0x120151e4[libgtcore.so]0x151e4
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+[gee-JNI] prefs.getString(android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) → �∝nJNIEnv->CallObjectMethodV(android.content.SharedPreferences@3d5c822d, getString("sdi", null) => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetStringUTFLength("") was called from RX@0x1201fef8[libgtcore.so]0x1fef8
+[FIELD] helper=0x13c74 caller=0x1ff40 key=sdi
+[FIELD] helper=0xbae7c caller=0x13ce4 key=sdi
+[FIELD] helper=0x13984 caller=0x425a8 key=sat
+JNIEnv->GetMethodID(android/content/Context.getPackageName()Ljava/lang/String;) => 0xf6590850 was called from RX@0x120438ec[libgtcore.so]0x438ec
+[gee-JNI] callObjectMethodV: android/content/Context->getPackageName()Ljava/lang/String;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getPackageName() => "com.collector.vun") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/Context.getPackageManager()Landroid/content/pm/PackageManager;) => 0x3acc78f0 was called from RX@0x1200fcf8[libgtcore.so]0xfcf8
+[gee-JNI] callObjectMethodV: android/content/Context->getPackageManager()Landroid/content/pm/PackageManager;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getPackageManager() => android.content.pm.PackageManager@10d307f1) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/pm/PackageManager.getPackageInfo(Ljava/lang/String;I)Landroid/content/pm/PackageInfo;) => 0x3bca8377 was called from RX@0x12010a10[libgtcore.so]0x10a10
+[gee-JNI] callObjectMethodV: android/content/pm/PackageManager->getPackageInfo(Ljava/lang/String;I)Landroid/content/pm/PackageInfo;
+JNIEnv->CallObjectMethodV(android.content.pm.PackageManager@10d307f1, getPackageInfo("com.collector.vun", 0x0) => android.content.pm.PackageInfo@4d5b6aac) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetFieldID(android/content/pm/PackageInfo.firstInstallTime J) => 0x215b0bd1 was called from RX@0x120203a4[libgtcore.so]0x203a4
+[gee-JNI] getLongField android/content/pm/PackageInfo->firstInstallTime:J → 0L
+JNIEnv->GetLongField(android.content.pm.PackageInfo@4d5b6aac, firstInstallTime => 0x0) was called from RX@0x12020348[libgtcore.so]0x20348
+JNIEnv->GetFieldID(android/content/pm/PackageInfo.lastUpdateTime J) => 0xb7c07d45 was called from RX@0x12020468[libgtcore.so]0x20468
+[gee-JNI] getLongField android/content/pm/PackageInfo->lastUpdateTime:J → 0L
+JNIEnv->GetLongField(android.content.pm.PackageInfo@4d5b6aac, lastUpdateTime => 0x0) was called from RX@0x1202019c[libgtcore.so]0x2019c
+[FIELD] helper=0x13c74 caller=0x202c0 key=fit
+[FIELD] helper=0xbae7c caller=0x13ce4 key=fit
+[FIELD] helper=0x13c74 caller=0x202dc key=lut
+[FIELD] helper=0xbae7c caller=0x13ce4 key=lut
+[FIELD] helper=0x13984 caller=0x52430 key=test
+JNIEnv->FindClass(java/lang/System) was called from RX@0x1200d190[libgtcore.so]0xd190
+JNIEnv->GetStaticMethodID(java/lang/System.currentTimeMillis()J) => 0x182fb631 was called from RX@0x1200d464[libgtcore.so]0xd464
+[gee-JNI] ★ currentTimeMillis → 1794240583163 (ts 键实锚!)
+JNIEnv->CallStaticLongMethodV(class java/lang/System, currentTimeMillis() => 0x1a1c11295fbL) was called from RX@0x12014cf8[libgtcore.so]0x14cf8
+JNIEnv->GetMethodID(android/content/Context.getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;) => 0xa0a12d1f was called from RX@0x12014fe4[libgtcore.so]0x14fe4
+JNIEnv->NewStringUTF("gt_core") was called from RX@0x12015030[libgtcore.so]0x15030
+[gee-JNI] callObjectMethodV: android/content/Context->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getSharedPreferences("gt_core", 0x0) => android.content.SharedPreferences@4a7f959b) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences.getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) => 0x2c5b4190 was called from RX@0x12015298[libgtcore.so]0x15298
+JNIEnv->NewStringUTF("gt_fp2") was called from RX@0x120151e4[libgtcore.so]0x151e4
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+[gee-JNI] prefs.getString(android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) → �∝nJNIEnv->CallObjectMethodV(android.content.SharedPreferences@4a7f959b, getString("gt_fp2", null) => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences.getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) => 0x2c5b4190 was called from RX@0x12015298[libgtcore.so]0x15298
+JNIEnv->NewStringUTF("gt_ts2") was called from RX@0x120151e4[libgtcore.so]0x151e4
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+[gee-JNI] prefs.getString(android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) → �∝nJNIEnv->CallObjectMethodV(android.content.SharedPreferences@4a7f959b, getString("gt_ts2", null) => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetStringUTFLength("") was called from RX@0x120168fc[libgtcore.so]0x168fc
+JNIEnv->NewStringUTF("1794240583") was called from RX@0x120d3d50[libgtcore.so]0xd3d50
+JNIEnv->GetMethodID(android/content/SharedPreferences.edit()Landroid/content/SharedPreferences$Editor;) => 0x5913f014 was called from RX@0x12015d30[libgtcore.so]0x15d30
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->edit()Landroid/content/SharedPreferences$Editor;
+JNIEnv->CallObjectMethodV(android.content.SharedPreferences@4a7f959b, edit() => android.content.SharedPreferences$Editor@581ac8a8) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences$Editor.putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;) => 0x201e0563 was called from RX@0x120159e8[libgtcore.so]0x159e8
+JNIEnv->NewStringUTF("gt_ts2") was called from RX@0x120157fc[libgtcore.so]0x157fc
+JNIEnv->NewStringUTF("1794240583") was called from RX@0x12015814[libgtcore.so]0x15814
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences$Editor->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
+[gee-JNI] Editor op android/content/SharedPreferences$Editor->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor; → true
+JNIEnv->CallObjectMethodV(android.content.SharedPreferences$Editor@581ac8a8, putString("gt_ts2", "1794240583") => java.lang.Boolean@76c3e77a) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences$Editor.apply()V) => 0x3434ff8c was called from RX@0x12015648[libgtcore.so]0x15648
+[gee-JNI] callVoidMethodV android/content/SharedPreferences$Editor->apply()V → ok
+JNIEnv->CallVoidMethodV(android.content.SharedPreferences$Editor@581ac8a8, apply()) was called from RX@0x12012974[libgtcore.so]0x12974
+JNIEnv->GetMethodID(android/content/Context.getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;) => 0xa0a12d1f was called from RX@0x12014fe4[libgtcore.so]0x14fe4
+JNIEnv->NewStringUTF("gt_core") was called from RX@0x12015030[libgtcore.so]0x15030
+[gee-JNI] callObjectMethodV: android/content/Context->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getSharedPreferences("gt_core", 0x0) => android.content.SharedPreferences@67c33749) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences.getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) => 0x2c5b4190 was called from RX@0x12015298[libgtcore.so]0x15298
+JNIEnv->NewStringUTF("gt_m") was called from RX@0x120151e4[libgtcore.so]0x151e4
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+[gee-JNI] prefs.getString(android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) → �∝nJNIEnv->CallObjectMethodV(android.content.SharedPreferences@67c33749, getString("gt_m", null) => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetStringUTFLength("") was called from RX@0x12020720[libgtcore.so]0x20720
+Nov 10, 2026 12:09:43 AM com.github.unidbg.linux.ARM64SyscallHandler fork
+INFO: fork
+JNIEnv->GetMethodID(android/content/SharedPreferences.getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) => 0x2c5b4190 was called from RX@0x12015298[libgtcore.so]0x15298
+JNIEnv->NewStringUTF("gt_m") was called from RX@0x120151e4[libgtcore.so]0x151e4
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+[gee-JNI] prefs.getString(android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) → �∝nJNIEnv->CallObjectMethodV(android.content.SharedPreferences@4a7f959b, getString("gt_m", null) => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetStringUTFLength("") was called from RX@0x120168fc[libgtcore.so]0x168fc
+JNIEnv->GetStringUTFLength("") was called from RX@0x120168fc[libgtcore.so]0x168fc
+JNIEnv->GetStringUTFLength("") was called from RX@0x12014020[libgtcore.so]0x14020
+[FIELD] helper=0xbae7c caller=0x13f20 key=m
+JNIEnv->NewStringUTF("Nexus 5X") was called from RX@0x12044008[libgtcore.so]0x44008
+JNIEnv->GetStringUTFLength("Nexus 5X") was called from RX@0x12014020[libgtcore.so]0x14020
+JNIEnv->GetStringUtfChars("Nexus 5X") was called from RX@0x12013ec0[libgtcore.so]0x13ec0
+[FIELD] helper=0xbae7c caller=0x13e50 key=m_m
+JNIEnv->ReleaseStringUTFChars("Nexus 5X") was called from RX@0x12013e68[libgtcore.so]0x13e68
+JNIEnv->GetMethodID(android/content/Context.getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;) => 0xa0a12d1f was called from RX@0x12014fe4[libgtcore.so]0x14fe4
+JNIEnv->NewStringUTF("gt_core") was called from RX@0x12015030[libgtcore.so]0x15030
+[gee-JNI] callObjectMethodV: android/content/Context->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getSharedPreferences("gt_core", 0x0) => android.content.SharedPreferences@3d6f0054) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences.getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) => 0x2c5b4190 was called from RX@0x12015298[libgtcore.so]0x15298
+JNIEnv->NewStringUTF("gt_gid") was called from RX@0x120151e4[libgtcore.so]0x151e4
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+[gee-JNI] prefs.getString(android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) → �∝nJNIEnv->CallObjectMethodV(android.content.SharedPreferences@3d6f0054, getString("gt_gid", null) => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetStringUTFLength("") was called from RX@0x120168fc[libgtcore.so]0x168fc
+JNIEnv->FindClass(android/os/Process) was called from RX@0x1202096c[libgtcore.so]0x2096c
+JNIEnv->GetStaticMethodID(android/os/Process.myPid()I) => 0xfb198f3e was called from RX@0x120209cc[libgtcore.so]0x209cc
+JNIEnv->GetStaticMethodID(android/os/Process.myUid()I) => 0x3a1ca59 was called from RX@0x12020e94[libgtcore.so]0x20e94
+[gee-JNI] myPid/myUid → 1234
+JNIEnv->CallStaticIntMethodV(class android/os/Process, myPid() => 0x4d2) was called from RX@0x1200f578[libgtcore.so]0xf578
+[gee-JNI] myPid/myUid → 1234
+JNIEnv->CallStaticIntMethodV(class android/os/Process, myUid() => 0x4d2) was called from RX@0x1200f578[libgtcore.so]0xf578
+JNIEnv->GetMethodID(android/content/Context.checkPermission(Ljava/lang/String;II)I) => 0x9daa2205 was called from RX@0x12021064[libgtcore.so]0x21064
+JNIEnv->NewStringUTF("android.permission.WRITE_EXTERNAL_STORAGE") was called from RX@0x12020b18[libgtcore.so]0x20b18
+[gee-JNI] ★ checkPermission android/content/Context->checkPermission(Ljava/lang/String;II)I → DENIED (-1)
+JNIEnv->CallIntMethodV(android.content.Context@4f67eb2a, checkPermission("android.permission.WRITE_EXTERNAL_STORAGE", 0x4d2, 0x4d2) => 0xffffffff) was called from RX@0x1200c520[libgtcore.so]0xc520
+[FIELD] helper=0x13c74 caller=0xd3ff0 key=d
+[FIELD] helper=0xbae7c caller=0x13ce4 key=d
+JNIEnv->GetStringUTFLength("") was called from RX@0x120168fc[libgtcore.so]0x168fc
+JNIEnv->GetMethodID(android/content/Context.getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;) => 0xa0a12d1f was called from RX@0x12014fe4[libgtcore.so]0x14fe4
+JNIEnv->NewStringUTF("gt_core") was called from RX@0x12015030[libgtcore.so]0x15030
+[gee-JNI] callObjectMethodV: android/content/Context->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getSharedPreferences("gt_core", 0x0) => android.content.SharedPreferences@25084a1e) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences.getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) => 0x2c5b4190 was called from RX@0x12015298[libgtcore.so]0x15298
+JNIEnv->NewStringUTF("gt_i_sh") was called from RX@0x120151e4[libgtcore.so]0x151e4
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+[gee-JNI] prefs.getString(android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) → �∝nJNIEnv->CallObjectMethodV(android.content.SharedPreferences@25084a1e, getString("gt_i_sh", null) => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetStringUTFLength("") was called from RX@0x120168fc[libgtcore.so]0x168fc
+JNIEnv->GetStringUTFLength("") was called from RX@0x120168fc[libgtcore.so]0x168fc
+JNIEnv->GetMethodID(android/content/Context.getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;) => 0xa0a12d1f was called from RX@0x12014fe4[libgtcore.so]0x14fe4
+JNIEnv->NewStringUTF("gt_core") was called from RX@0x12015030[libgtcore.so]0x15030
+[gee-JNI] callObjectMethodV: android/content/Context->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getSharedPreferences("gt_core", 0x0) => android.content.SharedPreferences@71def8f8) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences.getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) => 0x2c5b4190 was called from RX@0x12015298[libgtcore.so]0x15298
+JNIEnv->NewStringUTF("gt_i_a") was called from RX@0x120151e4[libgtcore.so]0x151e4
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+[gee-JNI] prefs.getString(android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) → �∝nJNIEnv->CallObjectMethodV(android.content.SharedPreferences@71def8f8, getString("gt_i_a", null) => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetStringUTFLength("") was called from RX@0x120168fc[libgtcore.so]0x168fc
+JNIEnv->FindClass(android/os/Process) was called from RX@0x1202096c[libgtcore.so]0x2096c
+JNIEnv->GetStaticMethodID(android/os/Process.myPid()I) => 0xfb198f3e was called from RX@0x120209cc[libgtcore.so]0x209cc
+JNIEnv->GetStaticMethodID(android/os/Process.myUid()I) => 0x3a1ca59 was called from RX@0x12020e94[libgtcore.so]0x20e94
+[gee-JNI] myPid/myUid → 1234
+JNIEnv->CallStaticIntMethodV(class android/os/Process, myPid() => 0x4d2) was called from RX@0x1200f578[libgtcore.so]0xf578
+[gee-JNI] myPid/myUid → 1234
+JNIEnv->CallStaticIntMethodV(class android/os/Process, myUid() => 0x4d2) was called from RX@0x1200f578[libgtcore.so]0xf578
+JNIEnv->GetMethodID(android/content/Context.checkPermission(Ljava/lang/String;II)I) => 0x9daa2205 was called from RX@0x12021064[libgtcore.so]0x21064
+JNIEnv->NewStringUTF("android.permission.READ_PHONE_STATE") was called from RX@0x12020b18[libgtcore.so]0x20b18
+[gee-JNI] ★ checkPermission android/content/Context->checkPermission(Ljava/lang/String;II)I → DENIED (-1)
+JNIEnv->CallIntMethodV(android.content.Context@4f67eb2a, checkPermission("android.permission.READ_PHONE_STATE", 0x4d2, 0x4d2) => 0xffffffff) was called from RX@0x1200c520[libgtcore.so]0xc520
+JNIEnv->GetStringUTFLength("") was called from RX@0x120168fc[libgtcore.so]0x168fc
+[FIELD] helper=0x13c74 caller=0xd3c04 key=i
+[FIELD] helper=0xbae7c caller=0x13ce4 key=i
+JNIEnv->GetMethodID(android/content/Context.getContentResolver()Landroid/content/ContentResolver;) => 0x3fe770ea was called from RX@0x1200de50[libgtcore.so]0xde50
+[gee-JNI] callObjectMethodV: android/content/Context->getContentResolver()Landroid/content/ContentResolver;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getContentResolver() => android.content.ContentResolver@5562c41e) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->FindClass(android/provider/Settings$Secure) was called from RX@0x120d4d70[libgtcore.so]0xd4d70
+JNIEnv->GetStaticMethodID(android/provider/Settings$Secure.getStringForUser(Landroid/content/ContentResolver;Ljava/lang/String;I)Ljava/lang/String;) => 0x297a80c2 was called from RX@0x120d4cb8[libgtcore.so]0xd4cb8
+JNIEnv->GetMethodID(android/content/Context.getUserId()I) => 0x1b984f76 was called from RX@0x120d4c44[libgtcore.so]0xd4c44
+JNIEnv->CallIntMethodV(android.content.Context@4f67eb2a, getUserId() => 0x0) was called from RX@0x1200c520[libgtcore.so]0xc520
+JNIEnv->NewStringUTF("android_id") was called from RX@0x120d4db8[libgtcore.so]0xd4db8
+[gee-JNI] ★ Settings.getString("android_id") → null
+JNIEnv->CallStaticObjectMethodV(class android/provider/Settings$Secure, getStringForUser(android.content.ContentResolver@5562c41e, "android_id", 0x0) => null) was called from RX@0x1200cf60[libgtcore.so]0xcf60
+JNIEnv->GetMethodID(android/content/Context.getContentResolver()Landroid/content/ContentResolver;) => 0x3fe770ea was called from RX@0x1200de50[libgtcore.so]0xde50
+[gee-JNI] callObjectMethodV: android/content/Context->getContentResolver()Landroid/content/ContentResolver;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getContentResolver() => android.content.ContentResolver@4d0f2471) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->FindClass(android/provider/Settings$Secure) was called from RX@0x1200d8b0[libgtcore.so]0xd8b0
+JNIEnv->GetStaticMethodID(android/provider/Settings$Secure.getString(Landroid/content/ContentResolver;Ljava/lang/String;)Ljava/lang/String;) => 0x3efce417 was called from RX@0x1200e2ec[libgtcore.so]0xe2ec
+JNIEnv->NewStringUTF("android_id") was called from RX@0x1200e184[libgtcore.so]0xe184
+[gee-JNI] ★ Settings.getString("android_id") → null
+JNIEnv->CallStaticObjectMethodV(class android/provider/Settings$Secure, getString(android.content.ContentResolver@4d0f2471, "android_id") => null) was called from RX@0x1200cf60[libgtcore.so]0xcf60
+[FIELD] helper=0x13c74 caller=0xd37f0 key=a_i
+[FIELD] helper=0xbae7c caller=0x13ce4 key=a_i
+JNIEnv->GetMethodID(android/content/SharedPreferences.getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) => 0x2c5b4190 was called from RX@0x12015298[libgtcore.so]0x15298
+JNIEnv->NewStringUTF("gt_d_u") was called from RX@0x120151e4[libgtcore.so]0x151e4
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+[gee-JNI] prefs.getString(android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) → �∝nJNIEnv->CallObjectMethodV(android.content.SharedPreferences@4a7f959b, getString("gt_d_u", null) => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetStringUTFLength("") was called from RX@0x120168fc[libgtcore.so]0x168fc
+JNIEnv->GetStringUTFLength("") was called from RX@0x120168fc[libgtcore.so]0x168fc
+JNIEnv->FindClass(java/util/UUID) was called from RX@0x1200c5b4[libgtcore.so]0xc5b4
+JNIEnv->GetStaticMethodID(java/util/UUID.randomUUID()Ljava/util/UUID;) => 0x3e954d3f was called from RX@0x1200cc9c[libgtcore.so]0xcc9c
+JNIEnv->CallStaticObjectMethodV(class java/util/UUID, randomUUID() => java.util.UUID@f736069) was called from RX@0x1200cf60[libgtcore.so]0xcf60
+JNIEnv->GetMethodID(java/util/UUID.toString()Ljava/lang/String;) => 0x4039b923 was called from RX@0x1200c86c[libgtcore.so]0xc86c
+[gee-JNI] callObjectMethodV: java/util/UUID->toString()Ljava/lang/String;
+JNIEnv->CallObjectMethodV(java.util.UUID@f736069, toString() => "adb24051-214f-49f8-97a2-e19cc16d98b8") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->FindClass(java/lang/String) was called from RX@0x1200cfc8[libgtcore.so]0xcfc8
+JNIEnv->GetMethodID(java/lang/String.replaceAll(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) => 0x7e257efa was called from RX@0x1200cff0[libgtcore.so]0xcff0
+JNIEnv->NewStringUTF("-") was called from RX@0x1200d008[libgtcore.so]0xd008
+JNIEnv->NewStringUTF("") was called from RX@0x1200d020[libgtcore.so]0xd020
+[gee-JNI] callObjectMethodV: java/lang/String->replaceAll(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+[gee-JNI] String op java/lang/String->replaceAll(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String; → original
+JNIEnv->CallObjectMethodV("adb24051-214f-49f8-97a2-e19cc16d98b8", replaceAll("-", "") => "adb24051-214f-49f8-97a2-e19cc16d98b8") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->FindClass(java/lang/System) was called from RX@0x1200d190[libgtcore.so]0xd190
+JNIEnv->GetStaticMethodID(java/lang/System.currentTimeMillis()J) => 0x182fb631 was called from RX@0x1200d464[libgtcore.so]0xd464
+[gee-JNI] ★ currentTimeMillis → 1794240583175 (ts 键实锚!)
+JNIEnv->CallStaticLongMethodV(class java/lang/System, currentTimeMillis() => 0x1a1c1129607L) was called from RX@0x12014cf8[libgtcore.so]0x14cf8
+JNIEnv->GetStringUtfChars("adb24051-214f-49f8-97a2-e19cc16d98b8") was called from RX@0x1200cd20[libgtcore.so]0xcd20
+JNIEnv->ReleaseStringUTFChars("adb24051-214f-49f8-97a2-e19cc16d98b8") was called from RX@0x1200cd88[libgtcore.so]0xcd88
+JNIEnv->NewStringUTF("adb24051-214f-49f8-97a2-e19cc16d98b81794240583175") was called from RX@0x1200cdd8[libgtcore.so]0xcdd8
+JNIEnv->GetStringUTFLength("adb24051-214f-49f8-97a2-e19cc16d98b81794240583175") was called from RX@0x120168fc[libgtcore.so]0x168fc
+JNIEnv->GetStringUtfChars("adb24051-214f-49f8-97a2-e19cc16d98b81794240583175") was called from RX@0x12016928[libgtcore.so]0x16928
+JNIEnv->ReleaseStringUTFChars("adb24051-214f-49f8-97a2-e19cc16d98b81794240583175") was called from RX@0x12016944[libgtcore.so]0x16944
+JNIEnv->GetMethodID(android/content/SharedPreferences.edit()Landroid/content/SharedPreferences$Editor;) => 0x5913f014 was called from RX@0x1201660c[libgtcore.so]0x1660c
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->edit()Landroid/content/SharedPreferences$Editor;
+JNIEnv->CallObjectMethodV(android.content.SharedPreferences@4a7f959b, edit() => android.content.SharedPreferences$Editor@2b91004a) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences$Editor.putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;) => 0x201e0563 was called from RX@0x120165c4[libgtcore.so]0x165c4
+JNIEnv->NewStringUTF("gt_d_u") was called from RX@0x12016114[libgtcore.so]0x16114
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences$Editor->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
+[gee-JNI] Editor op android/content/SharedPreferences$Editor->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor; → true
+JNIEnv->CallObjectMethodV(android.content.SharedPreferences$Editor@2b91004a, putString("gt_d_u", "adb24051-214f-49f8-97a2-e19cc16d98b81794240583175") => java.lang.Boolean@2fb3536e) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences$Editor.apply()V) => 0x3434ff8c was called from RX@0x12016238[libgtcore.so]0x16238
+[gee-JNI] callVoidMethodV android/content/SharedPreferences$Editor->apply()V → ok
+JNIEnv->CallVoidMethodV(android.content.SharedPreferences$Editor@2b91004a, apply()) was called from RX@0x12012974[libgtcore.so]0x12974
+JNIEnv->GetStringUtfChars("adb24051-214f-49f8-97a2-e19cc16d98b81794240583175") was called from RX@0x120d42a0[libgtcore.so]0xd42a0
+JNIEnv->GetStringUTFLength("adb24051-214f-49f8-97a2-e19cc16d98b81794240583175") was called from RX@0x120d42ec[libgtcore.so]0xd42ec
+JNIEnv->GetMethodID(android/content/Context.getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;) => 0xa0a12d1f was called from RX@0x12014fe4[libgtcore.so]0x14fe4
+JNIEnv->NewStringUTF("gt_core") was called from RX@0x12015030[libgtcore.so]0x15030
+[gee-JNI] callObjectMethodV: android/content/Context->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
+JNIEnv->CallObjectMethodV(android.content.Context@4f67eb2a, getSharedPreferences("gt_core", 0x0) => android.content.SharedPreferences@35aea049) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences.edit()Landroid/content/SharedPreferences$Editor;) => 0x5913f014 was called from RX@0x12015d30[libgtcore.so]0x15d30
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->edit()Landroid/content/SharedPreferences$Editor;
+JNIEnv->CallObjectMethodV(android.content.SharedPreferences@35aea049, edit() => android.content.SharedPreferences$Editor@7205765b) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences$Editor.putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;) => 0x201e0563 was called from RX@0x120159e8[libgtcore.so]0x159e8
+JNIEnv->NewStringUTF("gt_fp2") was called from RX@0x120157fc[libgtcore.so]0x157fc
+JNIEnv->NewStringUTF("780047b1ba781169c6b4ad939bdb9fe153f882c35779869e28b171f012900c4b") was called from RX@0x12015814[libgtcore.so]0x15814
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences$Editor->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
+[gee-JNI] Editor op android/content/SharedPreferences$Editor->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor; → true
+JNIEnv->CallObjectMethodV(android.content.SharedPreferences$Editor@7205765b, putString("gt_fp2", "780047b1ba781169c6b4ad939bdb9fe153f882c35779869e28b171f012900c4b") => java.lang.Boolean@6283d8b8) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences$Editor.apply()V) => 0x3434ff8c was called from RX@0x12015648[libgtcore.so]0x15648
+[gee-JNI] callVoidMethodV android/content/SharedPreferences$Editor->apply()V → ok
+JNIEnv->CallVoidMethodV(android.content.SharedPreferences$Editor@7205765b, apply()) was called from RX@0x12012974[libgtcore.so]0x12974
+JNIEnv->GetMethodID(android/content/SharedPreferences.edit()Landroid/content/SharedPreferences$Editor;) => 0x5913f014 was called from RX@0x12015d30[libgtcore.so]0x15d30
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->edit()Landroid/content/SharedPreferences$Editor;
+JNIEnv->CallObjectMethodV(android.content.SharedPreferences@35aea049, edit() => android.content.SharedPreferences$Editor@3b6ddd1d) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences$Editor.putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;) => 0x201e0563 was called from RX@0x120159e8[libgtcore.so]0x159e8
+JNIEnv->NewStringUTF("gt_fp_k2") was called from RX@0x120157fc[libgtcore.so]0x157fc
+JNIEnv->NewStringUTF("3") was called from RX@0x12015814[libgtcore.so]0x15814
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences$Editor->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
+[gee-JNI] Editor op android/content/SharedPreferences$Editor->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor; → true
+JNIEnv->CallObjectMethodV(android.content.SharedPreferences$Editor@3b6ddd1d, putString("gt_fp_k2", "3") => java.lang.Boolean@1da2cb77) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences$Editor.apply()V) => 0x3434ff8c was called from RX@0x12015648[libgtcore.so]0x15648
+[gee-JNI] callVoidMethodV android/content/SharedPreferences$Editor->apply()V → ok
+JNIEnv->CallVoidMethodV(android.content.SharedPreferences$Editor@3b6ddd1d, apply()) was called from RX@0x12012974[libgtcore.so]0x12974
+JNIEnv->ReleaseStringUTFChars("adb24051-214f-49f8-97a2-e19cc16d98b81794240583175") was called from RX@0x120d442c[libgtcore.so]0xd442c
+JNIEnv->NewStringUTF("780047b1ba781169c6b4ad939bdb9fe153f882c35779869e28b171f012900c4b") was called from RX@0x120d4448[libgtcore.so]0xd4448
+JNIEnv->GetStringUTFLength("adb24051-214f-49f8-97a2-e19cc16d98b81794240583175") was called from RX@0x12014020[libgtcore.so]0x14020
+JNIEnv->GetStringUtfChars("adb24051-214f-49f8-97a2-e19cc16d98b81794240583175") was called from RX@0x12013ec0[libgtcore.so]0x13ec0
+[FIELD] helper=0xbae7c caller=0x13e50 key=d_u
+JNIEnv->ReleaseStringUTFChars("adb24051-214f-49f8-97a2-e19cc16d98b81794240583175") was called from RX@0x12013e68[libgtcore.so]0x13e68
+JNIEnv->GetMethodID(android/content/SharedPreferences.getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) => 0x2c5b4190 was called from RX@0x12015298[libgtcore.so]0x15298
+JNIEnv->NewStringUTF("gt_gid3") was called from RX@0x120151e4[libgtcore.so]0x151e4
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+[gee-JNI] prefs.getString(android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) → �∝nJNIEnv->CallObjectMethodV(android.content.SharedPreferences@4a7f959b, getString("gt_gid3", null) => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences.getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) => 0x2c5b4190 was called from RX@0x12015298[libgtcore.so]0x15298
+JNIEnv->NewStringUTF("gt_sign") was called from RX@0x120151e4[libgtcore.so]0x151e4
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+[gee-JNI] prefs.getString(android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) → �∝nJNIEnv->CallObjectMethodV(android.content.SharedPreferences@4a7f959b, getString("gt_sign", null) => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetStringUTFLength("") was called from RX@0x120168fc[libgtcore.so]0x168fc
+JNIEnv->GetStringUtfChars("780047b1ba781169c6b4ad939bdb9fe153f882c35779869e28b171f012900c4b") was called from RX@0x120d4f80[libgtcore.so]0xd4f80
+JNIEnv->GetStringUtfChars("1794240583") was called from RX@0x120d4fa0[libgtcore.so]0xd4fa0
+JNIEnv->NewStringUTF("G02-1794240583-780047b1ba781169c6b4ad939bdb9fe153f882c35779869e28b171f012900c4b-wuQEm2oX") was called from RX@0x120d51d0[libgtcore.so]0xd51d0
+JNIEnv->GetStringUTFLength("G02-1794240583-780047b1ba781169c6b4ad939bdb9fe153f882c35779869e28b171f012900c4b-wuQEm2oX") was called from RX@0x120168fc[libgtcore.so]0x168fc
+JNIEnv->GetStringUtfChars("G02-1794240583-780047b1ba781169c6b4ad939bdb9fe153f882c35779869e28b171f012900c4b-wuQEm2oX") was called from RX@0x12016928[libgtcore.so]0x16928
+JNIEnv->ReleaseStringUTFChars("G02-1794240583-780047b1ba781169c6b4ad939bdb9fe153f882c35779869e28b171f012900c4b-wuQEm2oX") was called from RX@0x12016944[libgtcore.so]0x16944
+JNIEnv->NewStringUTF("406fc2e4049b6a17") was called from RX@0x120d4174[libgtcore.so]0xd4174
+JNIEnv->GetMethodID(android/content/SharedPreferences.edit()Landroid/content/SharedPreferences$Editor;) => 0x5913f014 was called from RX@0x1201660c[libgtcore.so]0x1660c
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->edit()Landroid/content/SharedPreferences$Editor;
+JNIEnv->CallObjectMethodV(android.content.SharedPreferences@4a7f959b, edit() => android.content.SharedPreferences$Editor@614ca7df) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences$Editor.putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;) => 0x201e0563 was called from RX@0x120165c4[libgtcore.so]0x165c4
+JNIEnv->NewStringUTF("gt_gid3") was called from RX@0x12016114[libgtcore.so]0x16114
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences$Editor->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
+[gee-JNI] Editor op android/content/SharedPreferences$Editor->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor; → true
+JNIEnv->CallObjectMethodV(android.content.SharedPreferences$Editor@614ca7df, putString("gt_gid3", "G02-1794240583-780047b1ba781169c6b4ad939bdb9fe153f882c35779869e28b171f012900c4b-wuQEm2oX") => java.lang.Boolean@66d3eec0) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences$Editor.apply()V) => 0x3434ff8c was called from RX@0x12016238[libgtcore.so]0x16238
+[gee-JNI] callVoidMethodV android/content/SharedPreferences$Editor->apply()V → ok
+JNIEnv->CallVoidMethodV(android.content.SharedPreferences$Editor@614ca7df, apply()) was called from RX@0x12012974[libgtcore.so]0x12974
+JNIEnv->GetMethodID(android/content/SharedPreferences.edit()Landroid/content/SharedPreferences$Editor;) => 0x5913f014 was called from RX@0x1201660c[libgtcore.so]0x1660c
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->edit()Landroid/content/SharedPreferences$Editor;
+JNIEnv->CallObjectMethodV(android.content.SharedPreferences@4a7f959b, edit() => android.content.SharedPreferences$Editor@1e04fa0a) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences$Editor.putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;) => 0x201e0563 was called from RX@0x120165c4[libgtcore.so]0x165c4
+JNIEnv->NewStringUTF("gt_sign") was called from RX@0x12016114[libgtcore.so]0x16114
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences$Editor->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
+[gee-JNI] Editor op android/content/SharedPreferences$Editor->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor; → true
+JNIEnv->CallObjectMethodV(android.content.SharedPreferences$Editor@1e04fa0a, putString("gt_sign", "406fc2e4049b6a17") => java.lang.Boolean@18d87d80) was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetMethodID(android/content/SharedPreferences$Editor.apply()V) => 0x3434ff8c was called from RX@0x12016238[libgtcore.so]0x16238
+[gee-JNI] callVoidMethodV android/content/SharedPreferences$Editor->apply()V → ok
+JNIEnv->CallVoidMethodV(android.content.SharedPreferences$Editor@1e04fa0a, apply()) was called from RX@0x12012974[libgtcore.so]0x12974
+JNIEnv->GetStringUTFLength("G02-1794240583-780047b1ba781169c6b4ad939bdb9fe153f882c35779869e28b171f012900c4b-wuQEm2oX") was called from RX@0x12014020[libgtcore.so]0x14020
+JNIEnv->GetStringUtfChars("G02-1794240583-780047b1ba781169c6b4ad939bdb9fe153f882c35779869e28b171f012900c4b-wuQEm2oX") was called from RX@0x12013ec0[libgtcore.so]0x13ec0
+[FIELD] helper=0xbae7c caller=0x13e50 key=3.0
+JNIEnv->ReleaseStringUTFChars("G02-1794240583-780047b1ba781169c6b4ad939bdb9fe153f882c35779869e28b171f012900c4b-wuQEm2oX") was called from RX@0x12013e68[libgtcore.so]0x13e68
+JNIEnv->GetStringUTFLength("406fc2e4049b6a17") was called from RX@0x12014020[libgtcore.so]0x14020
+JNIEnv->GetStringUtfChars("406fc2e4049b6a17") was called from RX@0x12013ec0[libgtcore.so]0x13ec0
+[FIELD] helper=0xbae7c caller=0x13e50 key=sign
+JNIEnv->ReleaseStringUTFChars("406fc2e4049b6a17") was called from RX@0x12013e68[libgtcore.so]0x13e68
+JNIEnv->GetMethodID(android/content/SharedPreferences.getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) => 0x2c5b4190 was called from RX@0x12015298[libgtcore.so]0x15298
+JNIEnv->NewStringUTF("gt_fp_k2") was called from RX@0x120151e4[libgtcore.so]0x151e4
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+[gee-JNI] prefs.getString(android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) → �∝nJNIEnv->CallObjectMethodV(android.content.SharedPreferences@4a7f959b, getString("gt_fp_k2", null) => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetStringUTFLength("780047b1ba781169c6b4ad939bdb9fe153f882c35779869e28b171f012900c4b") was called from RX@0x12014020[libgtcore.so]0x14020
+JNIEnv->GetStringUtfChars("780047b1ba781169c6b4ad939bdb9fe153f882c35779869e28b171f012900c4b") was called from RX@0x12013ec0[libgtcore.so]0x13ec0
+[FIELD] helper=0xbae7c caller=0x13e50 key=fp
+JNIEnv->ReleaseStringUTFChars("780047b1ba781169c6b4ad939bdb9fe153f882c35779869e28b171f012900c4b") was called from RX@0x12013e68[libgtcore.so]0x13e68
+JNIEnv->GetStringUTFLength("") was called from RX@0x12014020[libgtcore.so]0x14020
+[FIELD] helper=0xbae7c caller=0x13f20 key=fp_k
+[FIELD] helper=0x13c74 caller=0xd35b8 key=ver
+[FIELD] helper=0xbae7c caller=0x13ce4 key=ver
+JNIEnv->GetStringUTFLength("1794240583") was called from RX@0x12014020[libgtcore.so]0x14020
+JNIEnv->GetStringUtfChars("1794240583") was called from RX@0x12013ec0[libgtcore.so]0x13ec0
+[FIELD] helper=0xbae7c caller=0x13e50 key=ts
+JNIEnv->ReleaseStringUTFChars("1794240583") was called from RX@0x12013e68[libgtcore.so]0x13e68
+[FIELD] helper=0x13c74 caller=0xd35e8 key=name
+[FIELD] helper=0xbae7c caller=0x13ce4 key=name
+JNIEnv->FindClass(com/geetest/core/OaidHelper) was called from RX@0x120d52ec[libgtcore.so]0xd52ec
+JNIEnv->GetStaticMethodID(com/geetest/core/OaidHelper.getOaid(Landroid/content/Context;)Ljava/lang/String;) => 0xba3bb1c2 was called from RX@0x120d5514[libgtcore.so]0xd5514
+[gee-JNI] ★ OaidHelper.getOaid → 76a6c67e10b64a7e (gid.oaid 实证!)
+JNIEnv->CallStaticObjectMethodV(class com/geetest/core/OaidHelper, getOaid(android.content.Context@4f67eb2a) => "76a6c67e10b64a7e") was called from RX@0x1200cf60[libgtcore.so]0xcf60
+JNIEnv->GetStringUTFLength("76a6c67e10b64a7e") was called from RX@0x12014020[libgtcore.so]0x14020
+JNIEnv->GetStringUtfChars("76a6c67e10b64a7e") was called from RX@0x12013ec0[libgtcore.so]0x13ec0
+[FIELD] helper=0xbae7c caller=0x13e50 key=oaid
+JNIEnv->ReleaseStringUTFChars("76a6c67e10b64a7e") was called from RX@0x12013e68[libgtcore.so]0x13e68
+JNIEnv->GetMethodID(android/content/SharedPreferences.getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) => 0x2c5b4190 was called from RX@0x12015298[libgtcore.so]0x15298
+JNIEnv->NewStringUTF("gt_ggwid_obj") was called from RX@0x120151e4[libgtcore.so]0x151e4
+[gee-JNI] callObjectMethodV: android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+[gee-JNI] prefs.getString(android/content/SharedPreferences->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;) → �∝nJNIEnv->CallObjectMethodV(android.content.SharedPreferences@4a7f959b, getString("gt_ggwid_obj", null) => "") was called from RX@0x1200bfc0[libgtcore.so]0xbfc0
+JNIEnv->GetStringUTFLength("") was called from RX@0x120168fc[libgtcore.so]0x168fc
+[FIELD] helper=0x13c74 caller=0xd3c34 key=uid
+[FIELD] helper=0xbae7c caller=0x13ce4 key=uid
+Nov 10, 2026 12:09:43 AM com.github.unidbg.linux.android.ArmLD64 dlopen
+INFO: dlopen failed: /system/lib64/libmediandk.so
+[FIELD] helper=0x13c74 caller=0xd5814 key=mid
+[FIELD] helper=0xbae7c caller=0x13ce4 key=mid
+[FIELD] helper=0xbae7c caller=0x13f20 key=vmd
+[FIELD] helper=0x13984 caller=0x52450 key=gid
+[FIELD] helper=0x13984 caller=0x52464 key=data
+JNIEnv->GetStringUTFLength("mhs0n2abroy5ayzs5adtslzzsk1cya6h") was called from RX@0x12014020[libgtcore.so]0x14020
+JNIEnv->GetStringUtfChars("mhs0n2abroy5ayzs5adtslzzsk1cya6h") was called from RX@0x12013ec0[libgtcore.so]0x13ec0
+[FIELD] helper=0xbae7c caller=0x13e50 key=appId
+JNIEnv->ReleaseStringUTFChars("mhs0n2abroy5ayzs5adtslzzsk1cya6h") was called from RX@0x12013e68[libgtcore.so]0x13e68
+[FIELD] helper=0x13c74 caller=0x52494 key=libVer
+[FIELD] helper=0xbae7c caller=0x13ce4 key=libVer
+[FIELD] helper=0x13c74 caller=0xa7fc key=sign
+[FIELD] helper=0xbae7c caller=0x13ce4 key=sign
+[FIELD] helper=0x13c74 caller=0x524bc key=lib
+[FIELD] helper=0xbae7c caller=0x13ce4 key=lib
+[FIELD] helper=0x13c74 caller=0x524d4 key=ct
+[FIELD] helper=0xbae7c caller=0x13ce4 key=ct
+[FIELD] helper=0x13c74 caller=0x524ec key=crt
+[FIELD] helper=0xbae7c caller=0x13ce4 key=crt
+[FIELD] helper=0xbab9c caller=0x52500 key=level
+JNIEnv->FindClass(java/lang/System) was called from RX@0x1200d190[libgtcore.so]0xd190
+JNIEnv->GetStaticMethodID(java/lang/System.currentTimeMillis()J) => 0x182fb631 was called from RX@0x1200d464[libgtcore.so]0xd464
+[gee-JNI] ★ currentTimeMillis → 1794240583188 (ts 键实锚!)
+JNIEnv->CallStaticLongMethodV(class java/lang/System, currentTimeMillis() => 0x1a1c1129614L) was called from RX@0x12014cf8[libgtcore.so]0x14cf8
+[FIELD] helper=0xbab9c caller=0x52520 key=ts
+[FIELD] helper=0xbab9c caller=0x5258c key=et
+JNIEnv->FindClass(java/lang/System) was called from RX@0x1200d190[libgtcore.so]0xd190
+JNIEnv->GetStaticMethodID(java/lang/System.currentTimeMillis()J) => 0x182fb631 was called from RX@0x1200d464[libgtcore.so]0xd464
+[gee-JNI] ★ currentTimeMillis → 1794240583196 (ts 键实锚!)
+JNIEnv->CallStaticLongMethodV(class java/lang/System, currentTimeMillis() => 0x1a1c112961cL) was called from RX@0x12014cf8[libgtcore.so]0x14cf8
+[gee] getData(Landroid/content/Context;Lcom/geetest/core/GeeGuardConfiguration;)Ljava/lang/String;
+[gee] Native token captured under modeled Android API responses

@@ -131,6 +131,8 @@ class RecordingExporter(private val database: LoggerDatabase) {
                             writer.name("altitudeMeters").value(sample.altitudeMeters)
                             writer.name("speedMps").value(sample.speedMps)
                             writer.name("bearingDeg").value(sample.bearingDeg)
+                            writer.name("locationType").value(sample.locationType)
+                            writer.name("count").value(sample.count)
                             writer.name("altitudeSource").value(sample.altitudeSource)
                             writer.name("altitudeTimestampEpochMs").value(sample.altitudeTimestampEpochMs)
                             writer.name("altitudeMslMeters").value(sample.altitudeMslMeters)

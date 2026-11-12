@@ -7,7 +7,6 @@ object SampleRules {
         Sensor.TYPE_ACCELEROMETER,
         Sensor.TYPE_STEP_COUNTER,
         Sensor.TYPE_STEP_DETECTOR,
-        Sensor.TYPE_ORIENTATION,
         Sensor.TYPE_GYROSCOPE,
     )
 
@@ -15,7 +14,6 @@ object SampleRules {
         Sensor.TYPE_ACCELEROMETER -> "加速度计"
         Sensor.TYPE_STEP_COUNTER -> "累计计步"
         Sensor.TYPE_STEP_DETECTOR -> "单步事件"
-        Sensor.TYPE_ORIENTATION -> "方向"
         Sensor.TYPE_GYROSCOPE -> "陀螺仪"
         else -> "未知传感器 $type"
     }
@@ -23,7 +21,6 @@ object SampleRules {
     fun unit(type: Int): String = when (type) {
         Sensor.TYPE_ACCELEROMETER -> "m/s²"
         Sensor.TYPE_GYROSCOPE -> "rad/s"
-        Sensor.TYPE_ORIENTATION -> "°"
         Sensor.TYPE_STEP_COUNTER, Sensor.TYPE_STEP_DETECTOR -> "steps"
         else -> ""
     }
@@ -37,7 +34,6 @@ object SampleRules {
         return when (type) {
             Sensor.TYPE_STEP_COUNTER -> x >= 0 && x % 1.0 == 0.0
             Sensor.TYPE_STEP_DETECTOR -> x == 1.0
-            Sensor.TYPE_ORIENTATION -> x in 0.0..360.0
             else -> true
         }
     }

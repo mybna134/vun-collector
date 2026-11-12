@@ -29,9 +29,17 @@ Release keystore 由 GitHub Actions Secrets 提供。2026-11-09 已生成并切�
    | `KEYSTORE_PASSWORD` | keystore 密码 |
    | `KEY_ALIAS` | 已有签名 key 的 alias |
    | `KEY_PASSWORD` | 该 key 的密码 |
-| `KSTORE_TOKEN` | KStore access token；配置后发布会额外上传 OTA manifest 与 APK 到 `VunCollector/` |
+   | `REQUEST_SIGNING_KEY` | 与后端 Worker 同名 Secret 一致的 API HMAC 签名密钥（至少 32 个字符） |
+   | `R2_ACCOUNT_ID` | Cloudflare 账户 ID（32 位十六进制字符串） |
+   | `R2_BUCKET_NAME` | 用于发布更新的 R2 存储桶名 |
+   | `R2_ACCESS_KEY_ID` | R2 S3 API Access Key ID |
+   | `R2_SECRET_ACCESS_KEY` | R2 S3 API Secret Access Key |
 
-`KSTORE_TOKEN` 是可选项。未配置时保持 GitHub Release 发布流程；配置后 KStore API 任一步骤失败都会使该次发布失败。token 仅传给发布脚本进程和 KStore API，不应输出到日志。发布脚本会覆盖同名旧文件，先上传 `app-release.apk`，再写入 `update.json`，并为两者开启直链。
+R2 四项配置为必填，缺失或上传失败会使发布失败。创建仅限目标桶的“对象读和写”R2 API 凭据；签名 Secrets 保持不变。凭据仅在上传步骤通过环境变量传给 AWS CLI，不写入 APK、清单或下载链接。
+
+在 Cloudflare R2 控制台为目标桶连接自定义域名 **`oss.myb666.ccwu.cc`** 并启用公开访问。上传走 `https://<ACCOUNT_ID>.r2.cloudflarestorage.com` 的 S3 API（region 为 `auto`），客户端下载和更新说明走 `https://oss.myb666.ccwu.cc`。域名应允许无鉴权读取对象；无需使用临时签名下载 URL。参见 [R2 自定义域名](https://developers.cloudflare.com/r2/buckets/public-buckets/) 与 [S3 / AWS CLI](https://developers.cloudflare.com/r2/examples/aws/aws-cli/)。
+
+`tool/release/publish_r2.py` 使用 GitHub Ubuntu runner 自带的 AWS CLI：先上传 `VunCollector/releases/<versionCode>-<APK SHA256>.apk`，成功后覆盖 `VunCollector/update.json`。APK 对象使用版本和内容摘要命名并长期缓存；历史 APK 保留，避免已有清单失效。清单设置 `Cache-Control: no-cache, max-age=0, must-revalidate`，包含 `versionCode`、`versionName`、`commitComment`（发行提交说明）和自定义域名下的 `apkUrl`。如果配置 Cloudflare 缓存规则，清单路径应绕过缓存或遵循源站 Cache-Control，不能强制长期缓存。
 
 3. 保存 Secrets 后删除本地临时 `keystore.base64.txt`，原 keystore 和密码继续安全备份。不要执行 `gh auth token` 或输出环境变量来排查。
 
@@ -104,3 +112,7 @@ CI 必须配置全部 Secrets，并验证实际签名，绝不会将本地 unsig
 抽取实际 Gradle 版本与签名输入代码，以 Kotlin 编译并执行 12 组隔离用例，默认/覆盖/非法参数、无签名、本地配置、环境优先、部分配置检查通过；仅使用人工文件及占位密码。静态确认验证任务只挂接 packageRelease，不挂接 debug。这些检查未验证完整 Gradle DSL 或真实签名打包。
 
 2026-10-24 用户确认保持公开后，已推送 main 到 https://github.com/mybna134/vun-collector 。远端提交 41d960b 与本地一致；GitHub API 返回的 workflow blob SHA 与本地 hash-object 一致。发布副本共 108 个文件通过文件名、大小及凭据模式检查；未包含 keystore、签名属性、本地工具目录或构建产物。未创建或推送 tag，未配置真实 Secrets，未触发实际发行。原工作区 Git 元数据只读，提交与推送使用 /tmp/vun-collector-publish 副本完成。
+
+应用启动时自动检查更新，也可在 Settings 点击“检查更新”。清单地址固定为 `https://oss.myb666.ccwu.cc/VunCollector/update.json`，更新说明由清单的 `commitComment` 提供。手动检查显示检查状态并报告结果；发现更高 versionCode 时弹出更新对话框。下载通过同一自定义域名进行，显示进度条及右侧百分比。启动检查失败写入日志，不弹错误提示。
+
+首次切换到 R2 需要手动安装使用新域名构建的 APK；新客户端不再使用旧存储配置。配置 Secrets、R2 自定义域名并推送版本 tag 后，才能验证真实的 S3 上传和公开下载。本地测试不使用真实凭据、不上传对象。

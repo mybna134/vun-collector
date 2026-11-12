@@ -334,6 +334,8 @@ class RecordingService : Service(), SensorEventListener {
             altitudeMeters = location.altitudeMeters,
             speedMps = location.speedMps,
             bearingDeg = location.bearingDeg,
+            locationType = location.locationType,
+            count = location.count,
         )
         pendingLocationTypes[point] = location.locationType
         pendingLocations[point] = scope.launch {

@@ -43,7 +43,6 @@ jobs:
         id: version
         env:
           RELEASE_TAG: ${{ github.ref_name }}
-          KSTORE_TOKEN: ${{ secrets.KSTORE_TOKEN }}
         run: |
           python3 - <<'PY'
           import os, re
@@ -63,11 +62,6 @@ jobs:
               raise SystemExit('::error::minor/patch must be 0..99; versionCode must be 1..2100000000')
           with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
               output.write(f'name={tag[1:]}\ncode={code}\nprerelease={str(prerelease is not None).lower()}\n')
-              token = os.environ.get('KSTORE_TOKEN', '')
-              user_id = token.split('-', 1)[0] if token else ''
-              if user_id and not user_id.isdigit():
-                  raise SystemExit('::error::KSTORE_TOKEN must use the documented user-id-token format')
-              output.write(f'kstore_user_id={user_id}\n')
           print(f'Building versionName={tag[1:]}, versionCode={code}')
           PY
 
@@ -130,17 +124,20 @@ jobs:
 
       - name: Build signed release APK
         env:
+          REQUEST_SIGNING_KEY: ${{ secrets.REQUEST_SIGNING_KEY }}
           RELEASE_STORE_FILE: ${{ runner.temp }}/release-keystore.jks
           RELEASE_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           RELEASE_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           VERSION_NAME: ${{ steps.version.outputs.name }}
           VERSION_CODE: ${{ steps.version.outputs.code }}
-          KSTORE_USER_ID: ${{ steps.version.outputs.kstore_user_id }}
         run: |
+          if [[ -z "$REQUEST_SIGNING_KEY" ]]; then
+            echo '::error::Configure REQUEST_SIGNING_KEY to match the backend Worker secret'
+            exit 1
+          fi
           ./gradlew :app:assembleRelease \
             "-PversionName=$VERSION_NAME" "-PversionCode=$VERSION_CODE" \
-            "-PkstoreUserId=$KSTORE_USER_ID" \
             --no-configuration-cache --stacktrace --console=plain
 
       - name: Verify signature and version, rename APK
@@ -175,14 +172,23 @@ jobs:
           cp -- "${apks[0]}" "$target"
           printf 'path=%s\n' "$target" >> "$GITHUB_OUTPUT"
 
-      - name: Publish Kstore OTA update
+      - name: Publish Cloudflare R2 OTA update
         env:
-          KSTORE_TOKEN: ${{ secrets.KSTORE_TOKEN }}
           APK_PATH: ${{ steps.apk.outputs.path }}
           VERSION_NAME: ${{ steps.version.outputs.name }}
           VERSION_CODE: ${{ steps.version.outputs.code }}
           GITHUB_SHA: ${{ github.sha }}
-        run: python3 tool/release/publish_kstore.py
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          AWS_EC2_METADATA_DISABLED: 'true'
+          AWS_REQUEST_CHECKSUM_CALCULATION: WHEN_REQUIRED
+          AWS_RESPONSE_CHECKSUM_VALIDATION: WHEN_REQUIRED
+        run: |
+          aws --version
+          python3 tool/release/publish_r2.py
 
       - name: Remove temporary signing keystore
         if: ${{ always() }}

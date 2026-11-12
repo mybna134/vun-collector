@@ -1,0 +1,642 @@
+{
+  "data": {
+    "meaning": "采集对象，含 dev/test/gid",
+    "evidence": "### 顶层"
+  },
+  "appId": {
+    "meaning": "配置 AppID",
+    "evidence": "### 顶层"
+  },
+  "libVer": {
+    "meaning": "SDK 版本 `2.6.1`",
+    "evidence": "### 顶层"
+  },
+  "sign": {
+    "meaning": "配置 content/signature 对应的输出位；本轮为空",
+    "evidence": "### 顶层"
+  },
+  "lib": {
+    "meaning": "库族标识 `GGD`",
+    "evidence": "### 顶层"
+  },
+  "ct": {
+    "meaning": "客户端类型常量字符串 `1`",
+    "evidence": "### 顶层"
+  },
+  "crt": {
+    "meaning": "native 报告类型常量字符串 `5`",
+    "evidence": "### 顶层"
+  },
+  "level": {
+    "meaning": "配置采集等级",
+    "evidence": "### 顶层"
+  },
+  "ts": {
+    "meaning": "生成时刻，epoch 毫秒",
+    "evidence": "### 顶层"
+  },
+  "et": {
+    "meaning": "native 采集计时结果，毫秒",
+    "evidence": "### 顶层"
+  },
+  "data.dev.app": {
+    "meaning": "URL 编码的应用 label",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.ven": {
+    "meaning": "宿主包名",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.ps": {
+    "meaning": "首个包签名证书字节的 SHA-1 小写 hex",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.prp": {
+    "meaning": "包资源 APK 路径",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.pla": {
+    "meaning": "厂商品牌属性；具体 getter 见 FULL",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.mod": {
+    "meaning": "型号",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.osv": {
+    "meaning": "系统 release 版本",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.rel": {
+    "meaning": "应用 versionName",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.bui": {
+    "meaning": "应用 versionCode 的字符串形式",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.br": {
+    "meaning": "电量：level/scale 对应百分比",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.bs": {
+    "meaning": "BatteryManager 状态原值",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.plu": {
+    "meaning": "电源插入类型/标志原值",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.hea": {
+    "meaning": "电池健康状态原值",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.btv": {
+    "meaning": "电池电压 mV",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.cou": {
+    "meaning": "Locale 国家码",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.lang": {
+    "meaning": "Locale 语言码",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.w": {
+    "meaning": "实际显示像素宽",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.h": {
+    "meaning": "实际显示像素高",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.bt": {
+    "meaning": "开机后经过的毫秒，包含休眠",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.bri": {
+    "meaning": "屏幕亮度设置原值",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.s": {
+    "meaning": "scaledDensity",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.op": {
+    "meaning": "SIM 运营商数字码",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.car": {
+    "meaning": "SIM 运营商名称",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.btc": {
+    "meaning": "PowerProfile 报告的电池容量，mAh",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.rad": {
+    "meaning": "当前网络类型名称",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.mem": {
+    "meaning": "`/proc/meminfo` 的 MemTotal 数字文本，kB",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.tsz": {
+    "meaning": "存储总字节数",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.asz": {
+    "meaning": "可用存储字节数",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.os": {
+    "meaning": "平台字符串 `android`",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.loc": {
+    "meaning": "SDK 自身定位结果对象",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.loc.st": {
+    "meaning": "定位结果状态；本轮为 0，成功样本为 1",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.loc.se": {
+    "meaning": "定位失败/不可用路径中的状态文本；本轮 `\"0\"`",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.loc.loc": {
+    "meaning": "成功路径的位置对象；本轮没有",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.loc.loc.moc": {
+    "meaning": "mock location 标记",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.loc.loc.alt": {
+    "meaning": "海拔，m",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.loc.loc.hAcc": {
+    "meaning": "水平精度，m",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.loc.loc.vAcc": {
+    "meaning": "垂直精度，m",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.loc.loc.lat": {
+    "meaning": "纬度字符串",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.loc.loc.lon": {
+    "meaning": "经度字符串",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.loc.loc.ts": {
+    "meaning": "格式化的定位时间",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.ism": {
+    "meaning": "native 进程 cmdline 与宿主包名相等位",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.ip": {
+    "meaning": "按网络接口名称组织的 IPv4/IPv6 地址",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.sim": {
+    "meaning": "`getSimState()!=SIM_STATE_ABSENT(1)` 的二值结果；异常/不可取值也可能返回 1",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.bssid": {
+    "meaning": "Wi-Fi BSSID 原值",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.ssid": {
+    "meaning": "URL 编码的 Wi-Fi SSID",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.rssi": {
+    "meaning": "Wi-Fi 接收信号强度，dBm",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.gpa": {
+    "meaning": "查询 `com.android.vending` 的包信息得到的可用性位",
+    "evidence": "### `data.dev`"
+  },
+  "data.dev.hdt": {
+    "meaning": "Harmony 设备类型属性文本",
+    "evidence": "### `data.dev`"
+  },
+  "data.test.ir": {
+    "meaning": "su 文件、挂载、Magisk/KernelSU、SELinux 等多路检测的状态码",
+    "evidence": "### `data.test`"
+  },
+  "data.test.edp": {
+    "meaning": "上述检测附带的短标签列表，例如本轮 `mo`",
+    "evidence": "### `data.test`"
+  },
+  "data.test.ka": {
+    "meaning": "Android Key Attestation 调用与解析结果",
+    "evidence": "### `data.test`"
+  },
+  "data.test.ka.bl": {
+    "meaning": "RootOfTrust.deviceLocked 字符串",
+    "evidence": "### `data.test`"
+  },
+  "data.test.ka.vb": {
+    "meaning": "VerifiedBootState：0 Verified、1 Self-signed、2 Unverified、3 Failed",
+    "evidence": "### `data.test`"
+  },
+  "data.test.ka.rct": {
+    "meaning": "证书链根公钥识别结果，包含异常值 -1",
+    "evidence": "### `data.test`"
+  },
+  "data.test.ka.csn": {
+    "meaning": "证书链 serialNumber 的小写 hex 列表文本",
+    "evidence": "### `data.test`"
+  },
+  "data.test.ka.st": {
+    "meaning": "native attestation 调用/解析状态",
+    "evidence": "### `data.test`"
+  },
+  "data.test.iam": {
+    "meaning": "API≤22 的 mock_location 设置检查",
+    "evidence": "### `data.test`"
+  },
+  "data.test.iod": {
+    "meaning": "ADB 设置开启位",
+    "evidence": "### `data.test`"
+  },
+  "data.test.idv": {
+    "meaning": "宿主应用 debuggable 标志",
+    "evidence": "### `data.test`"
+  },
+  "data.test.ads": {
+    "meaning": "`init.svc.adbd` 系统属性文本",
+    "evidence": "### `data.test`"
+  },
+  "data.test.dtp": {
+    "meaning": "进程跟踪/TracerPid 探针结果",
+    "evidence": "### `data.test`"
+  },
+  "data.test.idc": {
+    "meaning": "Java debugger connected",
+    "evidence": "### `data.test`"
+  },
+  "data.test.idc2": {
+    "meaning": "native ART/JDWP 调试通道探针结果的一位",
+    "evidence": "### `data.test`"
+  },
+  "data.test.xpd": {
+    "meaning": "Xposed 相关检测标量",
+    "evidence": "### `data.test`"
+  },
+  "data.test.sub": {
+    "meaning": "Substrate 相关检测标量",
+    "evidence": "### `data.test`"
+  },
+  "data.test.slp": {
+    "meaning": "SELinux permissive 相关检测标量",
+    "evidence": "### `data.test`"
+  },
+  "data.test.smp": {
+    "meaning": "native 模块/映射扫描结果列表",
+    "evidence": "### `data.test`"
+  },
+  "data.test.sh": {
+    "meaning": "自身 SO 映射 SHA-256 的后半段 hex",
+    "evidence": "### `data.test`"
+  },
+  "data.test.nhdp": {
+    "meaning": "native 符号/Hook 检查生成的列表",
+    "evidence": "### `data.test`"
+  },
+  "data.test.fi": {
+    "meaning": "同一 native Hook 检查路径生成的对象",
+    "evidence": "### `data.test`"
+  },
+  "data.test.ghdp": {
+    "meaning": "另一组 native Hook/模块检查列表",
+    "evidence": "### `data.test`"
+  },
+  "data.test.rtp": {
+    "meaning": "85 项可疑应用包名表的路径可访问性命中，最多收集少量项",
+    "evidence": "### `data.test`"
+  },
+  "data.test.rrt": {
+    "meaning": "两类 native 扫描产生的短标签列表",
+    "evidence": "### `data.test`"
+  },
+  "data.test.rrs": {
+    "meaning": "系统服务扫描的命中条目",
+    "evidence": "### `data.test`"
+  },
+  "data.test.rmp": {
+    "meaning": "虚拟设备共享挂载点等匹配列表",
+    "evidence": "### `data.test`"
+  },
+  "data.test.pm": {
+    "meaning": "目标进程 `/proc/<pid>/maps` 行数的文本列表",
+    "evidence": "### `data.test`"
+  },
+  "data.test.sp": {
+    "meaning": "`/proc/<pid>/maps` 与相关文件描述符的检测标签",
+    "evidence": "### `data.test`"
+  },
+  "data.test.ro": {
+    "meaning": "docker 挂载计数与 `/system/addon.d` 等环境标签",
+    "evidence": "### `data.test`"
+  },
+  "data.test.sfp": {
+    "meaning": "108 项文件路径表的存在性命中",
+    "evidence": "### `data.test`"
+  },
+  "data.test.iss": {
+    "meaning": "本版本固定为 0 的接口",
+    "evidence": "### `data.test`"
+  },
+  "data.test.py": {
+    "meaning": "HTTP 系统代理 host/port 对象",
+    "evidence": "### `data.test`"
+  },
+  "data.test.onv": {
+    "meaning": "VPN 的 NetworkInfo.isConnected 位",
+    "evidence": "### `data.test`"
+  },
+  "data.test.gas": {
+    "meaning": "已启用无障碍服务包名数组",
+    "evidence": "### `data.test`"
+  },
+  "data.test.lauf": {
+    "meaning": "HOME intent 解析到的应用 firstInstallTime，格式化成本地时间文本",
+    "evidence": "### `data.test`"
+  },
+  "data.test.lauv": {
+    "meaning": "上述应用 versionName",
+    "evidence": "### `data.test`"
+  },
+  "data.test.laun": {
+    "meaning": "上述应用 label",
+    "evidence": "### `data.test`"
+  },
+  "data.test.lau": {
+    "meaning": "上述应用包名",
+    "evidence": "### `data.test`"
+  },
+  "data.test.pat": {
+    "meaning": "宿主 filesDir 的绝对路径",
+    "evidence": "### `data.test`"
+  },
+  "data.test.sen": {
+    "meaning": "选取的传感器 vendor/name 文本列表",
+    "evidence": "### `data.test`"
+  },
+  "data.test.sou": {
+    "meaning": "`/proc/asound/card0/id` 的声卡标识，可能走缓存",
+    "evidence": "### `data.test`"
+  },
+  "data.test.suv": {
+    "meaning": "`su -v` 命令输出，可能走缓存",
+    "evidence": "### `data.test`"
+  },
+  "data.test.mua": {
+    "meaning": "MMS User-Agent",
+    "evidence": "### `data.test`"
+  },
+  "data.test.brl": {
+    "meaning": "平台 Build/系统属性对象",
+    "evidence": "### `data.test`"
+  },
+  "data.test.sb": {
+    "meaning": "屏幕亮度设置原值",
+    "evidence": "### `data.test`"
+  },
+  "data.test.build": {
+    "meaning": "选取的 Android 系统属性对象",
+    "evidence": "### `data.test`"
+  },
+  "data.test.nnp": {
+    "meaning": "no_new_privs 查询结果及不支持/错误值",
+    "evidence": "### `data.test`"
+  },
+  "data.test.bid": {
+    "meaning": "`/proc/sys/kernel/random/boot_id` 输出",
+    "evidence": "### `data.test`"
+  },
+  "data.test.sdi": {
+    "meaning": "eMMC `/sys/block/mmcblk0/device/cid` 文本，可能走缓存",
+    "evidence": "### `data.test`"
+  },
+  "data.test.sat": {
+    "meaning": "选取的文件 stat 时间/inode 对象",
+    "evidence": "### `data.test`"
+  },
+  "data.test.sat.b": {
+    "meaning": "`/proc/sys/kernel/random/boot_id` 的 mtime ns、inode、`m`",
+    "evidence": "### `data.test`"
+  },
+  "data.test.sat.s": {
+    "meaning": "`/storage/emulated/` 的 atime ns、inode、`a`",
+    "evidence": "### `data.test`"
+  },
+  "data.test.sat.sam": {
+    "meaning": "`/sdcard/Android/` 的 mtime ns、inode、`m`",
+    "evidence": "### `data.test`"
+  },
+  "data.test.sat.saa": {
+    "meaning": "同目录的 atime ns、inode、`a`",
+    "evidence": "### `data.test`"
+  },
+  "data.test.fit": {
+    "meaning": "宿主 firstInstallTime，毫秒除以 1000 后的字符串",
+    "evidence": "### `data.test`"
+  },
+  "data.test.lut": {
+    "meaning": "宿主 lastUpdateTime，同上",
+    "evidence": "### `data.test`"
+  },
+  "data.test.brl.man": {
+    "meaning": "`ro.product.manufacturer`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.brl.pla": {
+    "meaning": "`Build.BRAND`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.brl.mod": {
+    "meaning": "`Build.MODEL`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.brl.osv": {
+    "meaning": "`Build.VERSION.RELEASE`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.brl.api": {
+    "meaning": "`ro.build.version.sdk`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.brl.pro": {
+    "meaning": "`ro.product.name`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.brl.abl": {
+    "meaning": "`ro.product.cpu.abilist`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.brl.cai": {
+    "meaning": "此 native ABI 常量 `arm64-v8a`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.brl.soc": {
+    "meaning": "`ro.board.platform`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.brl.fp": {
+    "meaning": "`ro.build.fingerprint`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.brl.cn": {
+    "meaning": "`/sys/devices/system/cpu/present`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.gss": {
+    "meaning": "`gsm.sim.state`，不是 GMS 状态",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.gvb": {
+    "meaning": "`gsm.version.baseband`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.gvri": {
+    "meaning": "`gsm.version.ril-impl`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.nh": {
+    "meaning": "`net.hostname`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.rbdu": {
+    "meaning": "`ro.build.date.utc`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.rbd": {
+    "meaning": "`ro.build.date`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.rbdi": {
+    "meaning": "`ro.build.display.id`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.rbh": {
+    "meaning": "`ro.build.host`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.rbi": {
+    "meaning": "`ro.build.id`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.rpb": {
+    "meaning": "`ro.product.board`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.gnt": {
+    "meaning": "`gsm.network.type`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.rcgc": {
+    "meaning": "`ro.com.google.clientidbase`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.gon": {
+    "meaning": "`gsm.operator.numeric`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.rh": {
+    "meaning": "`ro.hardware`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.rmvr": {
+    "meaning": "`ro.mediatek.version.release`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.rhbd": {
+    "meaning": "`ro.huawei.build.date`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.test.build.rchvh": {
+    "meaning": "`ro.config.hw_vassistant_honor`",
+    "evidence": "### `data.test.brl` 与 `build`"
+  },
+  "data.gid.m": {
+    "meaning": "`gt_m` 缓存的 WLAN MAC；获取路径解析 `ip link` 的 wlan0/link/ether",
+    "evidence": "### `data.gid`"
+  },
+  "data.gid.m_m": {
+    "meaning": "`ro.product.model`",
+    "evidence": "### `data.gid`"
+  },
+  "data.gid.d": {
+    "meaning": "`gt_gid`/外部存储多个隐藏文件保存的设备标识",
+    "evidence": "### `data.gid`"
+  },
+  "data.gid.i": {
+    "meaning": "选取的 IMEI 文本",
+    "evidence": "### `data.gid`"
+  },
+  "data.gid.a_i": {
+    "meaning": "Settings.Secure android_id",
+    "evidence": "### `data.gid`"
+  },
+  "data.gid.d_u": {
+    "meaning": "`gt_d_u` 缓存的兜底标识；首次生成可见 UUID 与毫秒时间拼接",
+    "evidence": "### `data.gid`"
+  },
+  "data.gid.3.0": {
+    "meaning": "`gt_gid3` 缓存的 `G02-时间-fp-尾部串` 形式 GeeID",
+    "evidence": "### `data.gid`"
+  },
+  "data.gid.sign": {
+    "meaning": "`gt_sign` 缓存的 GeeID 伴随值",
+    "evidence": "### `data.gid`"
+  },
+  "data.gid.fp": {
+    "meaning": "SDK 选源后产生/缓存的 32 字节摘要 hex",
+    "evidence": "### `data.gid`"
+  },
+  "data.gid.fp_k": {
+    "meaning": "`gt_fp_k2` 的指纹输入来源选择码",
+    "evidence": "### `data.gid`"
+  },
+  "data.gid.ver": {
+    "meaning": "GeeID 组件版本 `3.0.0`",
+    "evidence": "### `data.gid`"
+  },
+  "data.gid.ts": {
+    "meaning": "`gt_ts2` 缓存的 GeeID 时间，epoch 秒",
+    "evidence": "### `data.gid`"
+  },
+  "data.gid.name": {
+    "meaning": "组件名 `geeid`",
+    "evidence": "### `data.gid`"
+  },
+  "data.gid.oaid": {
+    "meaning": "`OaidHelper.getOaid(Context)` 返回值",
+    "evidence": "### `data.gid`"
+  },
+  "data.gid.uid": {
+    "meaning": "从 `gt_ggwid_obj` 关联缓存/生成路径取出的标识",
+    "evidence": "### `data.gid`"
+  },
+  "data.gid.mid": {
+    "meaning": "NDK MediaDrm `deviceUniqueId` 经编码后的标识",
+    "evidence": "### `data.gid`"
+  },
+  "data.gid.vmd": {
+    "meaning": "`ro.boot.vbmeta.digest` 系统属性",
+    "evidence": "### `data.gid`"
+  }
+}

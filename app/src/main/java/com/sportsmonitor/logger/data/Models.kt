@@ -68,6 +68,8 @@ data class LocationSampleEntity(
     val altitudeMeters: Double? = null,
     val speedMps: Double? = null,
     val bearingDeg: Double? = null,
+    val locationType: Int? = null,
+    val count: Int = 0,
     val altitudeSource: String? = null,
     val altitudeTimestampEpochMs: Long? = null,
     val altitudeMslMeters: Double? = null,

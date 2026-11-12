@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.gradle.api.GradleException
 import java.util.Properties
+import java.util.Base64
 
 // CI 使用整组环境变量；没有环境配置时才读取本地、未跟踪的属性文件。
 val signingEnvironment = mapOf(
@@ -54,10 +55,17 @@ val requestedVersionCode = providers.gradleProperty("versionCode").orElse("1").g
     it.toIntOrNull()?.takeIf { code -> code in 1..2100000000 }
         ?: throw GradleException("versionCode must be an integer between 1 and 2100000000")
 }
-val kstoreUserId = providers.gradleProperty("kstoreUserId").orElse("").get().trim()
-require(kstoreUserId.isEmpty() || kstoreUserId.matches(Regex("[0-9]+"))) {
-    "kstoreUserId must be a numeric KStore user id"
+val releaseRequestSigningKey = providers.environmentVariable("REQUEST_SIGNING_KEY")
+    .orElse("").get()
+val debugRequestSigningKey = providers.fileContents(rootProject.layout.projectDirectory.file(".request-signing-key"))
+    .asText.orElse("").get()
+require(releaseRequestSigningKey.isEmpty() || releaseRequestSigningKey.length >= 32) {
+    "REQUEST_SIGNING_KEY must contain at least 32 characters"
 }
+require(debugRequestSigningKey.isEmpty() || debugRequestSigningKey.length >= 32) {
+    "Local debug signing key must contain at least 32 characters"
+}
+fun encodedSigningKey(key: String): String = Base64.getEncoder().encodeToString(key.toByteArray(Charsets.UTF_8))
 
 plugins {
     id("com.android.application")
@@ -89,13 +97,17 @@ android {
         buildConfigField("String", "AMAP_ANDROID_KEY", "\"$amapAndroidKey\"")
         buildConfigField(
             "String",
-            "KSTORE_UPDATE_URL",
-            "\"${if (kstoreUserId.isEmpty()) "" else "https://download.kstore.space/api/v1/storage/download/$kstoreUserId/VunCollector/update.json"}\"",
+            "UPDATE_MANIFEST_URL",
+            "\"https://oss.myb666.ccwu.cc/VunCollector/update.json\"",
         )
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "REQUEST_SIGNING_KEY_BASE64", "\"${encodedSigningKey(debugRequestSigningKey)}\"")
+        }
         release {
+            buildConfigField("String", "REQUEST_SIGNING_KEY_BASE64", "\"${encodedSigningKey(releaseRequestSigningKey)}\"")
             isMinifyEnabled = false
             if (hasReleaseSigning && releaseSigningProblems.isEmpty()) {
                 signingConfig = signingConfigs.create("release") {
@@ -162,6 +174,7 @@ dependencies {
     implementation("androidx.room:room-ktx:2.8.4")
     ksp("androidx.room:room-compiler:2.8.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.amap.api:location:11.3.000")
     implementation("com.google.android.gms:play-services-location:21.2.0")
 

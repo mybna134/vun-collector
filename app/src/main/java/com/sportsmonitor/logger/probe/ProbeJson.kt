@@ -19,6 +19,17 @@ object ProbeJson {
         }
     }
 
+    fun locationWarning(json: String): String? {
+        // JSON still must be valid; missing or unusable SDK location only adds a warning.
+        JSONObject(json)
+        return try {
+            requireValidLocation(json)
+            null
+        } catch (error: IllegalStateException) {
+            "${error.message}，仍可导出"
+        }
+    }
+
     /** Keep the existing export contract without creating an archive. Invalid JSON fails generation. */
     fun sanitizeGeePlain(json: String): String {
         val runtime = setOf("app", "ven", "ts", "appId", "sign", "uid", "token",

@@ -1,0 +1,482 @@
+{
+  "aAA9AO": {
+    "rva": "0xf2010",
+    "value": "ro.build.version.sdk"
+  },
+  "aH": {
+    "rva": "0xf213c",
+    "value": "length"
+  },
+  "aIkzOmeoikgHa": {
+    "rva": "0xf23e8",
+    "value": "getPackageInfo"
+  },
+  "aBQn": {
+    "rva": "0xf2624",
+    "value": "getKey"
+  },
+  "aXyk5": {
+    "rva": "0xf26dc",
+    "value": "utf-8"
+  },
+  "aKix": {
+    "rva": "0xf26e4",
+    "value": "get"
+  },
+  "a894": {
+    "rva": "0xf27d8",
+    "value": "edit"
+  },
+  "aFdurxrudlrdswh": {
+    "rva": "0xf2990",
+    "value": "getSystemService"
+  },
+  "aJzifl": {
+    "rva": "0xf2a24",
+    "value": "BRAND"
+  },
+  "a0M1m": {
+    "rva": "0xf2a40",
+    "value": "android/os/Build$VERSION"
+  },
+  "aN": {
+    "rva": "0xf2ae0",
+    "value": "ro.board.platform"
+  },
+  "aN35a": {
+    "rva": "0xf2b80",
+    "value": "/root"
+  },
+  "aL": {
+    "rva": "0xf2b88",
+    "value": "r"
+  },
+  "aJohmCrnct": {
+    "rva": "0xf2e78",
+    "value": "link/ether"
+  },
+  "aRs3zeqAl": {
+    "rva": "0xf2ecc",
+    "value": "()I"
+  },
+  "aXzmpopmPwV9": {
+    "rva": "0xf3100",
+    "value": "activityInfo"
+  },
+  "a5L7l74171C": {
+    "rva": "0xf3250",
+    "value": "java/net/NetworkInterface"
+  },
+  "aNo0II2F": {
+    "rva": "0xf32d0",
+    "value": "()Ljava/lang/Object;"
+  },
+  "a577168T": {
+    "rva": "0xf3318",
+    "value": "accessibility"
+  },
+  "aL_0": {
+    "rva": "0xf3508",
+    "value": "gvb"
+  },
+  "a31A": {
+    "rva": "0xf35f4",
+    "value": "rpb"
+  },
+  "aNg": {
+    "rva": "0xf3614",
+    "value": "gnt"
+  },
+  "a1p6Uo": {
+    "rva": "0xf3670",
+    "value": "ro.hardware"
+  },
+  "a7637977737r0": {
+    "rva": "0xf3680",
+    "value": "ro.mediatek.version.release"
+  },
+  "a0S": {
+    "rva": "0xf36f0",
+    "value": "rchvh"
+  },
+  "a0QQ64Q608QQ2qQ": {
+    "rva": "0xf3e00",
+    "value": "/status | grep gmain | wc -l"
+  },
+  "aAk": {
+    "rva": "0xf3e20",
+    "value": "fl"
+  },
+  "aKvcEqpknwEqpkn": {
+    "rva": "0xf3fd0",
+    "value": "org.autojs.autojspro"
+  },
+  "a789U": {
+    "rva": "0xf4090",
+    "value": "bin.mt.plus"
+  },
+  "aJfdApJefgl": {
+    "rva": "0xf4258",
+    "value": "com.hy.clone"
+  },
+  "a846uCU594": {
+    "rva": "0xf4290",
+    "value": "com.x8zs.sandbox"
+  },
+  "aJfdOlgnFfSpcmb": {
+    "rva": "0xf42e0",
+    "value": "com.ifengwoo.zyjdkj"
+  },
+  "aDhjWfcRiTwuni": {
+    "rva": "0xf4300",
+    "value": "com.padyun.spring"
+  },
+  "aDlLZaLqy": {
+    "rva": "0xf4318",
+    "value": "me.weishu.exp"
+  },
+  "a79z7Z968155ZT": {
+    "rva": "0xf4350",
+    "value": "com.cyjh.mobileanjian.vip"
+  },
+  "a3389551494p": {
+    "rva": "0xf4370",
+    "value": "com.touchspriteent.android"
+  },
+  "a846u239u2464I": {
+    "rva": "0xf4710",
+    "value": "com.github.uiautomator2"
+  },
+  "aSystemBinDroid": {
+    "rva": "0xf47d0",
+    "value": "/system/bin/droid4x-vbox-sf"
+  },
+  "aH1hI2434i42752": {
+    "rva": "0xf48f0",
+    "value": "/dev/com.bluestacks.superuser.daemon"
+  },
+  "a668BO": {
+    "rva": "0xf4a30",
+    "value": "/system/bin/yiwan-sf"
+  },
+  "aIhBnfhyOlHolci": {
+    "rva": "0xf4cc0",
+    "value": "/dev/socket/baseband_genyd"
+  },
+  "aC8C8CB99b9L": {
+    "rva": "0xf4ff0",
+    "value": "/data/data/com.mumu.launcher"
+  },
+  "aGGGFFH": {
+    "rva": "0xf5210",
+    "value": "/vendor/bin/init.tencent.sh"
+  },
+  "aD828d8d9D8D389": {
+    "rva": "0xf52f0",
+    "value": "/sys/devices/virtual/misc/vboxuser"
+  },
+  "aZZ8190z291341U": {
+    "rva": "0xf5490",
+    "value": "/sys/module/goldfish_audio"
+  },
+  "aAAAAN": {
+    "rva": "0xf55e0",
+    "value": "/data/local/tmp/minitouch"
+  },
+  "aMhHEfjheDyDfkE": {
+    "rva": "0xf5690",
+    "value": "/data/local/tmp/mobile_info.properties"
+  },
+  "aDataLocalTmpCo": {
+    "rva": "0xf5730",
+    "value": "/data/local/tmp/com.cyjh.mobileanjianen.id"
+  },
+  "aLiIDgkidExBMba": {
+    "rva": "0xf5760",
+    "value": "/data/local/tmp/juejinAzykb/"
+  },
+  "aI2II26i1540H6F": {
+    "rva": "0xf5880",
+    "value": "/data/local/tmp/yijianwanservice.apk"
+  },
+  "aSawAMuwfdwV2": {
+    "rva": "0xf5ae0",
+    "value": "ASensor_getVendor"
+  },
+  "aP2pP61p": {
+    "rva": "0xf5bb0",
+    "value": "/system/sd/xbin/su"
+  },
+  "aA7A6AN": {
+    "rva": "0xf5cf0",
+    "value": "/system/xbin/sugote"
+  },
+  "aEEE9J": {
+    "rva": "0xf5e88",
+    "value": "/odm/bin/su"
+  },
+  "aL31L0L670c": {
+    "rva": "0xf5fe0",
+    "value": "/proc/self/mounts"
+  },
+  "aR9R9R20s3252S3": {
+    "rva": "0xf6000",
+    "value": "/data/data/com.noshufou.android.su"
+  },
+  "aL7L7LM0M17c": {
+    "rva": "0xf6150",
+    "value": "/data/data/com.smedialink.oneclickroot"
+  },
+  "aCfsfCfsfDhjFkb": {
+    "rva": "0xf61b0",
+    "value": "/data/data/com.alephzain.framaroot"
+  },
+  "aJ117j573e": {
+    "rva": "0xf64f8",
+    "value": "/attr/prev"
+  },
+  "a35G": {
+    "rva": "0xf6510",
+    "value": "getenforce"
+  },
+  "a0": {
+    "rva": "0xf65a4",
+    "value": "brl"
+  },
+  "aYhoeohyqoynjuY": {
+    "rva": "0xf6940",
+    "value": "getSystemService"
+  },
+  "a254": {
+    "rva": "0xf6988",
+    "value": "window"
+  },
+  "aZxintprmxoIro": {
+    "rva": "0xf6a38",
+    "value": "getSimOperator"
+  },
+  "aLpptTvkTkvp": {
+    "rva": "0xf6a80",
+    "value": "http.proxyPort"
+  },
+  "aGgP4": {
+    "rva": "0xf6b20",
+    "value": "ssid"
+  },
+  "aLn": {
+    "rva": "0xf6b28",
+    "value": "\""
+  },
+  "a878q": {
+    "rva": "0xf6b44",
+    "value": "wifi"
+  },
+  "aQQ13p017P073Q2": {
+    "rva": "0xf6c30",
+    "value": "/apex/com.android.runtime/lib64/libjdwp.so"
+  },
+  "a2f": {
+    "rva": "0xf6d5c",
+    "value": "clat"
+  },
+  "a89M": {
+    "rva": "0xf6dfc",
+    "value": "UMTS"
+  },
+  "aHIbrl": {
+    "rva": "0xf6e14",
+    "value": "EVDO_A"
+  },
+  "aL_1": {
+    "rva": "0xf6e24",
+    "value": "HSDPA"
+  },
+  "a172B": {
+    "rva": "0xf6e2c",
+    "value": "HSUPA"
+  },
+  "aCnod": {
+    "rva": "0xf6e3c",
+    "value": "IDEN"
+  },
+  "aJ": {
+    "rva": "0xf6e6c",
+    "value": "IWLAN"
+  },
+  "aPrcdZdcvcr7": {
+    "rva": "0xf6ea8",
+    "value": "getSimState"
+  },
+  "a0644045Aq": {
+    "rva": "0xf6ee0",
+    "value": "/storage/emulated/0"
+  },
+  "aKwowhy": {
+    "rva": "0xf70d8",
+    "value": "2.6.1"
+  },
+  "a47S": {
+    "rva": "0xf7208",
+    "value": "ghdp"
+  },
+  "aEctebdwbs6": {
+    "rva": "0xf7240",
+    "value": "substrate"
+  },
+  "aO": {
+    "rva": "0xf7268",
+    "value": "libsandhook"
+  },
+  "a417X": {
+    "rva": "0xf7288",
+    "value": "libxposed"
+  },
+  "aKgeDpr": {
+    "rva": "0xf72d0",
+    "value": "com.lxzs"
+  },
+  "a47D": {
+    "rva": "0xf7348",
+    "value": "libexposed"
+  },
+  "a4oog": {
+    "rva": "0xf7380",
+    "value": "apk008"
+  },
+  "aPsHusrqsW": {
+    "rva": "0xf7390",
+    "value": "locationmock"
+  },
+  "aTtZ8": {
+    "rva": "0xf73a8",
+    "value": "lldb"
+  },
+  "aMhcinnjds": {
+    "rva": "0xf73e0",
+    "value": "libhooker"
+  },
+  "aZPx": {
+    "rva": "0xf7500",
+    "value": "r-xp"
+  },
+  "aPxgmy4": {
+    "rva": "0xf7548",
+    "value": "dlsym"
+  },
+  "a62782S": {
+    "rva": "0xf7588",
+    "value": "readlinkat"
+  },
+  "a4R": {
+    "rva": "0xf7638",
+    "value": "from"
+  },
+  "a191t": {
+    "rva": "0xf764c",
+    "value": "remove"
+  },
+  "aOHo": {
+    "rva": "0xf7670",
+    "value": "test"
+  },
+  "aHcq": {
+    "rva": "0xf7690",
+    "value": "gt_m"
+  },
+  "aHgmFMMhHDy": {
+    "rva": "0xf7910",
+    "value": "Android/data/tmp"
+  },
+  "aM": {
+    "rva": "0xf7aac",
+    "value": "hea"
+  },
+  "aQvHzs": {
+    "rva": "0xf7b4c",
+    "value": "tsz"
+  },
+  "a88K": {
+    "rva": "0xf7b70",
+    "value": "bssid"
+  },
+  "aGeeid": {
+    "rva": "0xf7c78",
+    "value": "geeid"
+  },
+  "aTzr": {
+    "rva": "0xf7c80",
+    "value": "oaid"
+  },
+  "a0Y": {
+    "rva": "0xf7c98",
+    "value": "uid"
+  },
+  "aTofAjvD": {
+    "rva": "0xf7cb8",
+    "value": "vmd"
+  },
+  "aGet": {
+    "rva": "0xf7ec4",
+    "value": "get"
+  },
+  "a2V": {
+    "rva": "0xf7f00",
+    "value": "sdu"
+  },
+  "aSraTrYqx7": {
+    "rva": "0xf7f08",
+    "value": "deviceInfo"
+  },
+  "a8N": {
+    "rva": "0xf7f28",
+    "value": "vaid"
+  },
+  "aL_2": {
+    "rva": "0xf7f34",
+    "value": "aaid"
+  },
+  "aH_0": {
+    "rva": "0xf7f40",
+    "value": "imei"
+  },
+  "a5000113P171t": {
+    "rva": "0xf8000",
+    "value": "android/provider/Settings$Secure"
+  },
+  "aLnXnybo": {
+    "rva": "0xf80a0",
+    "value": "getUserId"
+  },
+  "aA7AXzaN": {
+    "rva": "0xf80c0",
+    "value": "/system/lib64/libmediandk.so"
+  },
+  "aUtgxrtdXDtxu1": {
+    "rva": "0xf8120",
+    "value": "deviceUniqueId"
+  },
+  "aBfk560r": {
+    "rva": "0xf8130",
+    "value": "mid"
+  },
+  "aMac": {
+    "rva": "0xf8140",
+    "value": "com.baidu.deviceid"
+  },
+  "aLogj": {
+    "rva": "0xf8144",
+    "value": "baidu.deviceid"
+  },
+  "a3E": {
+    "rva": "0xf8208",
+    "value": "deviceid"
+  },
+  "aYprr1": {
+    "rva": "0xf8298",
+    "value": "hAcc"
+  },
+  "aP": {
+    "rva": "0xf82c0",
+    "value": "lon"
+  }
+}

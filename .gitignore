@@ -13,3 +13,6 @@ release-key.jks
 .cxx/
 
 keystore.base64.txt
+__pycache__/
+*.pyc
+.request-signing-key

@@ -43,12 +43,13 @@ class ProbeViewModel internal constructor(
         if (!session.beginGeneration(ProbeTool.GEE)) return
         viewModelScope.launch {
             try {
-                locationAwaiter.await()
+                val locationWarning = optionalGeeLocation { locationAwaiter.await() }
+                locationWarning?.let(::message)
                 val token = withContext(sdkDispatcher) { GeeSdk.generate(app) }
                 val json = withContext(Dispatchers.Default) { ProbeJson.decrypt(token) }
-                ProbeJson.requireValidLocation(json)
+                val sdkLocationWarning = ProbeJson.locationWarning(json)
                 session.completeGeneration(ProbeTool.GEE, json)
-                message("GeeToken 生成成功$permissionWarning")
+                message("GeeToken 生成成功$permissionWarning" + (sdkLocationWarning?.let { " · $it" } ?: ""))
             } catch (error: Throwable) {
                 session.failGeneration(ProbeTool.GEE)
                 if (error is CancellationException && error !is TimeoutCancellationException) throw error

@@ -25,8 +25,8 @@ class GnssAltitudeDatabaseTest {
         assertTrue(NativeAltitude.accept(Double.POSITIVE_INFINITY).isNaN())
     }
 
-    @Test fun oldDatabaseMigratesWithoutLosingRecordOrInventingAltitude() = runBlocking {
-        val name = "altitude-migration-${System.nanoTime()}.db"
+    @Test fun oldDatabaseIsDeletedAndRecreatedOnVersionChange() = runBlocking {
+        val name = "altitude-recreate-${System.nanoTime()}.db"
         val file = context.getDatabasePath(name)
         file.parentFile!!.mkdirs()
         SQLiteDatabase.openOrCreateDatabase(file, null).use { old ->
@@ -40,13 +40,17 @@ class GnssAltitudeDatabaseTest {
             old.version = 1
         }
         val database = Room.databaseBuilder(context, LoggerDatabase::class.java, name)
-            .addMigrations(LoggerDatabase.MIGRATION_1_2).build()
+            .fallbackToDestructiveMigration(dropAllTables = true).build()
         try {
-            assertEquals("原有记录", database.recordingDao().getRecording("old")!!.name)
-            val point = database.recordingDao().locationPage("old", 10, 0).single()
-            assertEquals(37.0, point.latitude, 0.0)
-            assertNull(point.altitudeMeters)
-            assertNull(point.altitudeSource)
+            val dao = database.recordingDao()
+            assertNull(dao.getRecording("old"))
+            assertTrue(dao.locationPage("old", 10, 0).isEmpty())
+            dao.insertRecording(RecordingEntity(id = "new", name = "新记录", startMs = 1000))
+            dao.insertLocationSamples(listOf(LocationSampleEntity(
+                recordingId = "new", timestampEpochMs = 1500, originalLocationTimeMs = 1500,
+                latitude = 37.0, longitude = 114.0, accuracyMeters = 2.0, locationType = 1,
+            )))
+            assertEquals(1, dao.locationPage("new", 10, 0).single().locationType)
         } finally { database.close(); context.deleteDatabase(name) }
     }
 
@@ -59,7 +63,9 @@ class GnssAltitudeDatabaseTest {
             dao.insertLocationSamples(listOf(
                 LocationSampleEntity(recordingId = "altitude", timestampEpochMs = 1000, originalLocationTimeMs = 1000,
                     latitude = 37.0, longitude = 114.0, accuracyMeters = 2.0,
-                    altitudeMeters = 80.0, altitudeSource = "nmea_gga", altitudeTimestampEpochMs = 1000,
+                    source = "amap_android_sdk", coordsys = "GCJ02", locationType = 1, count = 12,
+                    altitudeMeters = 80.123456, speedMps = 1.23456, bearingDeg = 123.456,
+                    altitudeSource = "amap_sdk", altitudeTimestampEpochMs = 1000,
                     altitudeMslMeters = 100.0, geoidSeparationMeters = -20.0),
                 LocationSampleEntity(recordingId = "altitude", timestampEpochMs = 3000, originalLocationTimeMs = 3000,
                     latitude = 37.0001, longitude = 114.0001, accuracyMeters = 2.0),
@@ -68,14 +74,21 @@ class GnssAltitudeDatabaseTest {
                     altitudeMeters = NativeAltitude.accept(-3.0), altitudeSource = "gps_jni", altitudeTimestampEpochMs = 5000),
             ))
             val file = File(context.filesDir, "altitude-v2-integration.json")
+            assertEquals(1, dao.locationPage("altitude", 10, 0).first().locationType)
+            assertEquals(12, dao.locationPage("altitude", 10, 0).first().count)
             RecordingExporter(database).export(context.contentResolver, "altitude", Uri.fromFile(file), context.cacheDir)
             val root = JSONObject(file.readText())
             assertEquals(2, root.getInt("schemaVersion"))
             val points = root.getJSONArray("gpsSamples")
-            assertEquals(80.0, points.getJSONObject(0).getDouble("altitudeMeters"), 0.0)
-            assertEquals("nmea_gga", points.getJSONObject(0).getString("altitudeSource"))
+            assertEquals(80.123456, points.getJSONObject(0).getDouble("altitudeMeters"), 0.0)
+            assertEquals("amap_sdk", points.getJSONObject(0).getString("altitudeSource"))
+            assertEquals(1, points.getJSONObject(0).getInt("locationType"))
+            assertEquals(12, points.getJSONObject(0).getInt("count"))
+            assertEquals(0, points.getJSONObject(1).getInt("count"))
+            assertEquals(1.23456, points.getJSONObject(0).getDouble("speedMps"), 0.0)
+            assertEquals(123.456, points.getJSONObject(0).getDouble("bearingDeg"), 0.0)
             assertEquals(-3.0, points.getJSONObject(2).getDouble("altitudeMeters"), 0.0)
-            for (key in listOf("altitudeMeters", "altitudeSource", "altitudeTimestampEpochMs", "altitudeMslMeters", "geoidSeparationMeters")) {
+            for (key in listOf("altitudeMeters", "speedMps", "bearingDeg", "locationType", "altitudeSource", "altitudeTimestampEpochMs", "altitudeMslMeters", "geoidSeparationMeters")) {
                 assertTrue(points.getJSONObject(1).has(key))
                 assertTrue(points.getJSONObject(1).isNull(key))
             }

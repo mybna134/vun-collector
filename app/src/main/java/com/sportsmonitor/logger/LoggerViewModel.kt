@@ -14,10 +14,16 @@ import com.sportsmonitor.logger.data.LocationSampleEntity
 import com.sportsmonitor.logger.data.RecordingEntity
 import com.sportsmonitor.logger.data.RecordingExporter
 import com.sportsmonitor.logger.data.RecordingStatus
+import com.sportsmonitor.logger.data.RecordingSummary
 import com.sportsmonitor.logger.data.SampleRules
 import com.sportsmonitor.logger.data.SensorSampleEntity
+import com.sportsmonitor.logger.auth.ApiException
+import com.sportsmonitor.logger.upload.RecordingUploadClient
+import java.io.File
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -27,6 +33,7 @@ class LoggerViewModel(application: Application) : AndroidViewModel(application) 
     private val app = application as LoggerApplication
     private val database = app.database
     private val dao = database.recordingDao()
+    val loginSession = app.auth.session
     val summaries = dao.observeSummaries().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     var detail by mutableStateOf<RecordingEntity?>(null)
         private set
@@ -41,6 +48,8 @@ class LoggerViewModel(application: Application) : AndroidViewModel(application) 
     var relativeStepValues by mutableStateOf<Map<Long, Double>>(emptyMap())
         private set
     var message by mutableStateOf<String?>(null)
+        private set
+    var uploadingRecordingId by mutableStateOf<String?>(null)
         private set
 
     fun clearMessage() { message = null }
@@ -155,6 +164,57 @@ class LoggerViewModel(application: Application) : AndroidViewModel(application) 
 
     fun export(id: String, uri: Uri) = mutate("JSON 已导出") {
         withContext(Dispatchers.IO) { RecordingExporter(database).export(app.contentResolver, id, uri, app.cacheDir) }
+    }
+
+    fun upload(record: RecordingSummary, templateName: String) {
+        if (uploadingRecordingId != null) return
+        if (record.status == RecordingStatus.ACTIVE) {
+            message = "请先停止采集再上传"
+            return
+        }
+        if (loginSession.value == null) {
+            message = "请先在 Settings 登录后上传"
+            return
+        }
+        val name = try { RecordingUploadClient.normalizeTemplateName(templateName) }
+        catch (error: IllegalArgumentException) {
+            message = error.message ?: "模板名称无效"
+            return
+        }
+        uploadingRecordingId = record.id
+        viewModelScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    val context = currentCoroutineContext()
+                    var authorization = app.auth.authorizeUpload()
+                    val file = File.createTempFile("recording-upload-", ".json", app.cacheDir)
+                    try {
+                        RecordingExporter(database).export(app.contentResolver, record.id, Uri.fromFile(file), app.cacheDir)
+                        val client = RecordingUploadClient(app.auth.api.signer)
+                        fun send() = client.upload(file, authorization.session.accessToken, name) {
+                            context.ensureActive()
+                            app.auth.checkCurrent(authorization)
+                        }
+                        try { send() } catch (error: ApiException) {
+                            if (error.code != "invalid_access_token") throw error
+                            app.auth.checkCurrent(authorization)
+                            app.auth.expireAccess(authorization)
+                            authorization = app.auth.authorizeUpload()
+                            send()
+                        }
+                    } finally {
+                        file.delete()
+                    }
+                }
+                message = "模板“$name”上传成功"
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                message = error.message ?: "上传失败"
+            } finally {
+                uploadingRecordingId = null
+            }
+        }
     }
 
     private fun mutate(success: String, action: suspend () -> Unit) {

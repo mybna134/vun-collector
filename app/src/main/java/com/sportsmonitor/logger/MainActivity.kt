@@ -12,6 +12,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -25,8 +26,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.TopAppBar
@@ -47,6 +51,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -61,6 +66,7 @@ import com.sportsmonitor.logger.probe.GeoPage
 import com.sportsmonitor.logger.probe.ProbeTool
 import com.sportsmonitor.logger.data.RecordingStatus
 import com.sportsmonitor.logger.data.RecordingSummary
+import com.sportsmonitor.logger.upload.RecordingUploadClient
 import com.sportsmonitor.logger.data.SampleRules
 import com.sportsmonitor.logger.recording.LiveRecordingState
 import com.sportsmonitor.logger.recording.LiveSession
@@ -88,6 +94,7 @@ class MainActivity : ComponentActivity() {
 private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel = viewModel()) {
     val context = LocalContext.current
     val summaries by vm.summaries.collectAsState()
+    val loginSession by vm.loginSession.collectAsState()
     val live by LiveRecordingState.session.collectAsState()
     var historyVisible by rememberSaveable { mutableStateOf(false) }
     var historyDetailId by rememberSaveable { mutableStateOf<String?>(null) }
@@ -104,6 +111,28 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
     val coroutineScope = rememberCoroutineScope()
     var availableUpdate by remember { mutableStateOf<UpdateManifest?>(null) }
     var updateDownloadInProgress by remember { mutableStateOf(false) }
+    var updateDownloadProgress by remember { mutableStateOf(0L to -1L) }
+    var updateDownloadError by remember { mutableStateOf<String?>(null) }
+    var updateCheckInProgress by remember { mutableStateOf(false) }
+    suspend fun checkForUpdates(manual: Boolean) {
+        if (updateCheckInProgress) return
+        updateCheckInProgress = true
+        try {
+            val update = withContext(Dispatchers.IO) {
+                val installedCode = context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode.toInt()
+                OtaUpdates.check(BuildConfig.UPDATE_MANIFEST_URL, installedCode)
+            }
+            availableUpdate = update
+            if (manual && update == null) snackbar.showSnackbar("已是最新版本")
+        } catch (cancelled: kotlinx.coroutines.CancellationException) {
+            throw cancelled
+        } catch (error: Exception) {
+            android.util.Log.w("OtaUpdates", "检查更新失败", error)
+            if (manual) snackbar.showSnackbar("检查更新失败：${error.message ?: "请检查网络后重试"}")
+        } finally {
+            updateCheckInProgress = false
+        }
+    }
     fun withAmapKey(action: () -> Unit) {
         if (AmapLocationSource.availableKey(context).isBlank()) {
             vm.showMessage("高德 Android SDK Key 未配置")
@@ -112,10 +141,6 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
         action()
     }
     fun generate() {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            vm.showMessage("需要精确定位权限")
-            return
-        }
         val phoneWarning = if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) "" else " · 电话权限未授予，部分字段可能缺失"
         probe.generate(phoneWarning)
     }
@@ -195,17 +220,10 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
     LaunchedEffect(historyDetailId) {
         historyDetailId?.let { if (vm.detail?.id != it) vm.openDetail(it) }
     }
-    LaunchedEffect(Unit) {
-        availableUpdate = withContext(Dispatchers.IO) {
-            runCatching {
-                val installedCode = context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode.toInt()
-                OtaUpdates.check(BuildConfig.KSTORE_UPDATE_URL, installedCode)
-            }.getOrNull()
-        }
-    }
+    LaunchedEffect(Unit) { checkForUpdates(manual = false) }
     Scaffold(
         topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) },
-        snackbarHost = { SnackbarHost(snackbar) },
+        snackbarHost = { if (!historyVisible) SnackbarHost(snackbar) },
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).padding(16.dp)) {
             val tabs = listOf("运动采集", "GeeToken", "DeviceInfo", "其他信息", "Settings")
@@ -231,7 +249,9 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
                     pendingProbeExport != null,
                     { withAmapKey(action = fetchGeo) },
                     onExport = { exportProbe(ProbeTool.GEO) })
-                4 -> SettingsPage(settings)
+                4 -> SettingsPage(settings,
+                    checkingForUpdates = updateCheckInProgress,
+                    onCheckForUpdates = { coroutineScope.launch { checkForUpdates(manual = true) } })
                 else -> RecordingPage(live,
                     onStart = { withAmapKey {
                         val requested = mutableListOf(Manifest.permission.ACTIVITY_RECOGNITION,
@@ -254,35 +274,66 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
                         Text("${update.versionCode}")
                         Text(update.commitComment)
                     }
-                    if (updateDownloadInProgress) Text("正在下载更新…")
+                    if (updateDownloadInProgress) {
+                        val (downloaded, total) = updateDownloadProgress
+                        Text("正在下载更新…")
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            if (total > 0L) {
+                                val progress = (downloaded.toFloat() / total).coerceIn(0f, 1f)
+                                LinearProgressIndicator(progress = { progress }, modifier = Modifier.weight(1f))
+                                Text("${(progress * 100).toInt()}%")
+                            } else {
+                                LinearProgressIndicator(modifier = Modifier.weight(1f))
+                                Text("—%")
+                            }
+                        }
+                    }
+                    updateDownloadError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
                 }
             },
             confirmButton = {
-                Button(enabled = !updateDownloadInProgress, onClick = {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !context.packageManager.canRequestPackageInstalls()) {
-                        val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
-                            data = Uri.parse("package:${context.packageName}")
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Button(enabled = !updateDownloadInProgress, onClick = {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !context.packageManager.canRequestPackageInstalls()) {
+                            val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                                data = Uri.parse("package:${context.packageName}")
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(intent)
+                            return@Button
                         }
-                        context.startActivity(intent)
-                        return@Button
+                        updateDownloadInProgress = true
+                        updateDownloadProgress = 0L to -1L
+                        updateDownloadError = null
+                        coroutineScope.launch {
+                            try {
+                                val apk = withContext(Dispatchers.IO) {
+                                    OtaUpdates.download(context, update.apkUrl) { downloaded, total ->
+                                        updateDownloadProgress = downloaded to total
+                                    }
+                                }
+                                OtaUpdates.install(context, apk)
+                                availableUpdate = null
+                            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                                throw cancelled
+                            } catch (error: Exception) {
+                                android.util.Log.w("OtaUpdates", "下载或安装更新失败", error)
+                                updateDownloadError = error.message ?: "下载更新失败，请重试"
+                            } finally {
+                                updateDownloadInProgress = false
+                            }
+                        }
+                    }) { Text("更新") }
+                    OutlinedButton(enabled = !updateDownloadInProgress, onClick = { availableUpdate = null }) {
+                        Text("取消")
                     }
-                    updateDownloadInProgress = true
-                    coroutineScope.launch {
-                        runCatching {
-                            withContext(Dispatchers.IO) { OtaUpdates.download(context, update.apkUrl) }
-                        }.onSuccess { apk ->
-                            availableUpdate = null
-                            runCatching { OtaUpdates.install(context, apk) }
-                                .onFailure { snackbar.showSnackbar(it.message ?: "无法启动安装程序") }
-                        }.onFailure { snackbar.showSnackbar(it.message ?: "下载更新失败") }
-                        updateDownloadInProgress = false
-                    }
-                }) { Text(if (updateDownloadInProgress) "下载中" else "确认") }
-            },
-            dismissButton = {
-                OutlinedButton(enabled = !updateDownloadInProgress, onClick = { availableUpdate = null }) {
-                    Text("取消")
                 }
             },
         )
@@ -293,20 +344,23 @@ private fun LoggerRoot(vm: LoggerViewModel = viewModel(), probe: ProbeViewModel 
             onDismissRequest = { historyVisible = false; historyDetailId = null },
             sheetState = sheetState,
         ) {
-            Column(Modifier.fillMaxWidth().fillMaxHeight(0.9f).padding(horizontal = 16.dp)) {
-                // Handle detail back before the sheet's own dismiss back handler.
-                BackHandler(enabled = historyDetailId != null) { historyDetailId = null }
-                if (historyDetailId == null) {
-                    RecordsPage(summaries, onOpen = { id ->
-                        vm.openDetail(id)
-                        historyDetailId = id
-                    })
-                } else {
-                    DetailPage(vm, onBack = { historyDetailId = null }, onExport = { record ->
-                        exportId = record.id
-                        createDocument.launch("sensor-recording-${record.startMs}.json")
-                    }, onDeleted = { historyDetailId = null })
+            Box(Modifier.fillMaxWidth().fillMaxHeight(0.9f)) {
+                Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
+                    // Handle detail back before the sheet's own dismiss back handler.
+                    BackHandler(enabled = historyDetailId != null) { historyDetailId = null }
+                    if (historyDetailId == null) {
+                        RecordsPage(summaries, vm.uploadingRecordingId, loginSession?.username, onUpload = vm::upload, onOpen = { id ->
+                            vm.openDetail(id)
+                            historyDetailId = id
+                        })
+                    } else {
+                        DetailPage(vm, onBack = { historyDetailId = null }, onExport = { record ->
+                            exportId = record.id
+                            createDocument.launch("sensor-recording-${record.startMs}.json")
+                        }, onDeleted = { historyDetailId = null })
+                    }
                 }
+                SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter))
             }
         }
     }
@@ -345,21 +399,80 @@ private fun RecordingPage(live: LiveSession, onStart: () -> Unit, onStop: () -> 
 }
 
 @Composable
-private fun ColumnScope.RecordsPage(summaries: List<RecordingSummary>, onOpen: (String) -> Unit) {
+private fun ColumnScope.RecordsPage(
+    summaries: List<RecordingSummary>,
+    uploadingId: String?,
+    uploadUsername: String?,
+    onUpload: (RecordingSummary, String) -> Unit,
+    onOpen: (String) -> Unit,
+) {
+    var uploadRecordId by rememberSaveable { mutableStateOf<String?>(null) }
     Text("历史记录", style = MaterialTheme.typography.headlineSmall)
+    if (uploadUsername == null) Text("请先在 Settings 登录后上传")
     Spacer(Modifier.height(12.dp))
     if (summaries.isEmpty()) Text("尚无记录")
     LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         items(summaries, key = { it.id }) { record ->
-            OutlinedButton(onClick = { onOpen(record.id) }, modifier = Modifier.fillMaxWidth()) {
-                Column(Modifier.fillMaxWidth()) {
-                    Text(record.name, fontWeight = FontWeight.Bold)
-                    Text("${formatTime(record.startMs)} · ${statusLabel(record.status)} · ${record.sampleCount} 个点")
-                    Text("时长：${durationText(record.startMs, record.endMs)}")
+            Column(Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    OutlinedButton(onClick = { onOpen(record.id) }, modifier = Modifier.weight(1f)) {
+                        Column(Modifier.fillMaxWidth()) {
+                            Text(record.name, fontWeight = FontWeight.Bold)
+                            Text("${formatTime(record.startMs)} · ${statusLabel(record.status)} · ${record.sampleCount} 个点")
+                            Text("时长：${durationText(record.startMs, record.endMs)}")
+                        }
+                    }
+                    Button(
+                        onClick = { uploadRecordId = record.id },
+                        enabled = uploadUsername != null && uploadingId == null && record.status != RecordingStatus.ACTIVE,
+                    ) { Text(if (uploadingId == record.id) "上传中…" else "上传") }
                 }
             }
         }
     }
+    summaries.firstOrNull { it.id == uploadRecordId }?.let { record ->
+        val username = uploadUsername ?: return@let
+        UploadTemplateDialog(record, username, onDismiss = { uploadRecordId = null }, onUpload = { name ->
+            uploadRecordId = null
+            onUpload(record, name)
+        })
+    }
+}
+
+@Composable
+private fun UploadTemplateDialog(record: RecordingSummary, username: String, onDismiss: () -> Unit, onUpload: (String) -> Unit) {
+    val date = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(Date(record.startMs))
+    val seconds = ((record.endMs ?: record.startMs) - record.startMs).coerceAtLeast(0L) / 1000
+    val defaultName = "$username-$date-$seconds"
+    var name by rememberSaveable(record.id, username) { mutableStateOf(defaultName) }
+    var error by remember { mutableStateOf<String?>(null) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("上传模板") },
+        text = {
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it; error = null },
+                label = { Text("模板名称") },
+                placeholder = { Text(defaultName) },
+                singleLine = true,
+                isError = error != null,
+                supportingText = { Text(error ?: "1–255 个字符") },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                try { onUpload(RecordingUploadClient.normalizeTemplateName(name)) }
+                catch (invalid: IllegalArgumentException) { error = invalid.message }
+            }) { Text("上传") }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("取消") } },
+    )
 }
 
 internal fun formatTime(epochMs: Long): String =

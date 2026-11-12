@@ -27,6 +27,7 @@ data class AmapFix(
     val speedMps: Double?,
     val bearingDeg: Double?,
     val locationType: Int,
+    val count: Int,
     val city: String?,
     val province: String?,
     val district: String?,
@@ -94,6 +95,7 @@ object AmapLocationSource {
             location.speed.takeIf { location.hasSpeed() && it.isFinite() }?.toDouble(),
             location.bearing.takeIf { location.hasBearing() && it.isFinite() }?.toDouble(),
             location.locationType,
+            location.satellites,
             location.city?.trim()?.takeIf(String::isNotEmpty),
             location.province?.trim()?.takeIf(String::isNotEmpty),
             location.district?.trim()?.takeIf(String::isNotEmpty))
